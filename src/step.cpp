@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include <iostream>
 #include "meep.hpp"
 #include "meep_internals.hpp"
 
@@ -80,6 +80,7 @@ void fields::step() {
     auto step_timer = with_timing_scope(BoundarySteppingWH);
     step_boundaries(WH_stuff);
   }
+  cout << "DOING UPDATE POLS AND STEPPING STUFF...." << endl;
   update_pols(H_stuff);
   {
     auto step_timer = with_timing_scope(BoundarySteppingPH);
