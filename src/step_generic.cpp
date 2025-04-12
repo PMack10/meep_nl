@@ -587,6 +587,32 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
       if (chi3) {
+          /// Build NR solver into this section here. **should add similar copy to the section further down without PML...
+          /// Will be callable by defining the 2nd order NL material with a diagonal epsilon (i.e. u1 && u2 must be non-zero) and
+          /// setting chi3 as nonzero as a flag (chi3 will not be used, but setting it to non-zero is a hack to make the code enter this 'if' statement for the NL material
+          /// f = 
+          /// fc = 
+          /// gv = grid volume (need to ploopoverivecs)
+          /// is, ie, start and end of chunk
+          /// g, g1, g2 = D - P  field components
+          /// u, u1, u2 = diagonal epsilon
+          /// s, s1, s2 = 
+          /// chi2 = whatver you want, will be applied in NR
+          /// chi3 = a flag (set to nonzero float to indicate NL material)
+          /// fw[i] = i-th cell electric field the output from this fn. Will also need to create and import fw_1 and fw_2 (i.e, X, Y and Z) since the NR algo updates them all in one go...
+          /// dsigw = 
+          /// sigw = 
+          /// kapw = 
+          build header for NR
+              need to find and access previous field vals to use as seeds? could try using fixed seed first...
+              will be format Parameters p1 = {prevF X, eps, 0, 0, 0, chi2, 0, 0};
+
+
+
+
+
+
+
         //////////////////// MOST GENERAL CASE //////////////////////
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -597,8 +623,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
           fw[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
-                                   chi3[i]);
-          f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
+                                   chi3[i]);   // this line is the bit that needs to change
+          f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;  // this line is additional and is for the pml?? can leave as is??
         }
         /////////////////////////////////////////////////////////////
       }

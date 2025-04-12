@@ -77,26 +77,33 @@ bool fields_chunk::update_eh(field_type ft, bool skip_w_components) {
     }
   }
 
-  FOR_FT_COMPONENTS(ft, ec) {
-    component dc = field_type_component(ft2, ec);
-    DOCMP {
+
+  //########## ALL CODE FROM HERE TO THE BOTTOM OF THE PAGE HAS BEEN COPY-PASTED FROM MY OLD ANNOTATED COPY OF MEEP - THE CODE SHOULD BE THE SAME, JUST HAS USEFUL COMMENTS...
+
+FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff; Ex, Ey, Er, Ep Ez...
+    component dc =
+        field_type_component(ft2, ec); // ft2 is D_stuff. dc = Dx, Dy, etc for ec = Ex, Ey,...
+    DOCMP {                            // Re and Im
       bool need_fmp = false;
-      if (f[ec][cmp]) {
+      if (f[ec][cmp]) { // if E field component is nonzero...
         need_fmp = have_int_sources;
         for (polarization_state *p = pol[ft]; p && !need_fmp; p = p->next)
-          need_fmp = need_fmp || p->s->needs_P(ec, cmp, f);
+          need_fmp = need_fmp || p->s->needs_P(ec, cmp, f); // allocate memory?
       }
-      if (need_fmp) {
-        if (!f_minus_p[dc][cmp]) f_minus_p[dc][cmp] = new realnum[gv.ntot()];
+      if (need_fmp) { // allocate memory
+        if (!f_minus_p[dc][cmp])
+          f_minus_p[dc][cmp] =
+              new realnum[gv.ntot()]; // set each field and component an empty array of size
+                                      // sufficient for the gv (i.e. points in the chunk)...
       }
       else if (f_minus_p[dc][cmp]) { // remove unneeded f_minus_p
         delete[] f_minus_p[dc][cmp];
-        f_minus_p[dc][cmp] = 0;
+        f_minus_p[dc][cmp] = 0; // bind to 0 so as to avoid having a dangling pointer
       }
     }
   }
   bool have_f_minus_p = false;
-  FOR_FT_COMPONENTS(ft2, dc) {
+  FOR_FT_COMPONENTS(ft2, dc) { // check if any d field components are actually required
     if (f_minus_p[dc][0]) {
       have_f_minus_p = true;
       break;
@@ -145,70 +152,79 @@ bool fields_chunk::update_eh(field_type ft, bool skip_w_components) {
     dmp[dc][cmp] = f_minus_p[dc][cmp] ? f_minus_p[dc][cmp] : f[dc][cmp];
   }
 
+
+  /// ############### THIS is the loop that needs modifying for Newton Raphson implementation
   for (size_t i = 0; i < gvs_eh[ft].size(); ++i) {
-    DOCMP FOR_FT_COMPONENTS(ft, ec) {
-      if (f[ec][cmp]) {
-        if (type(ec) != ft) meep::abort("bug in FOR_FT_COMPONENTS");
-        component dc = field_type_component(ft2, ec);
-        const direction d_ec = component_direction(ec);
-        const ptrdiff_t s_ec = gv.stride(d_ec) * (ft == H_stuff ? -1 : +1);
-        const direction d_1 = cycle_direction(gv.dim, d_ec, 1);
-        const component dc_1 = direction_component(dc, d_1);
-        const ptrdiff_t s_1 = gv.stride(d_1) * (ft == H_stuff ? -1 : +1);
-        const direction d_2 = cycle_direction(gv.dim, d_ec, 2);
-        const component dc_2 = direction_component(dc, d_2);
-        const ptrdiff_t s_2 = gv.stride(d_2) * (ft == H_stuff ? -1 : +1);
+    DOCMP { // added { here to split the two loop macros
+      FOR_FT_COMPONENTS(ft, ec) {
+        if (f[ec][cmp]) {
+          if (type(ec) != ft) meep::abort("bug in FOR_FT_COMPONENTS");
+          component dc = field_type_component(ft2, ec);
+          const direction d_ec =
+              component_direction(ec); // Direction of main field component  (e.g. X)
+          const ptrdiff_t s_ec =
+              gv.stride(d_ec) * (ft == H_stuff ? -1 : +1); // stride of main field component
+          const direction d_1 =
+              cycle_direction(gv.dim, d_ec, 1); // Direction of next field component (e.g. Y)
+          const component dc_1 = direction_component(dc, d_1); // next field component
+          const ptrdiff_t s_1 =
+              gv.stride(d_1) * (ft == H_stuff ? -1 : +1);         // stride of next field component
+          const direction d_2 = cycle_direction(gv.dim, d_ec, 2); // '' #2   (e.g. Z)
+          const component dc_2 = direction_component(dc, d_2);    // '' #2
+          const ptrdiff_t s_2 = gv.stride(d_2) * (ft == H_stuff ? -1 : +1); // '' #2
 
-        direction dsigw0 = d_ec;
-        direction dsigw = s->sigsize[dsigw0] > 1 ? dsigw0 : NO_DIRECTION;
+          direction dsigw0 = d_ec;
+          direction dsigw = s->sigsize[dsigw0] > 1 ? dsigw0 : NO_DIRECTION;
 
-        // lazily allocate any E/H fields that are needed (H==B initially)
-        if (i == 0 && f[ec][cmp] == f[dc][cmp] &&
-            (s->chi1inv[ec][d_ec] || have_f_minus_p || dsigw != NO_DIRECTION)) {
-          f[ec][cmp] = new realnum[gv.ntot()];
-          memcpy(f[ec][cmp], f[dc][cmp], gv.ntot() * sizeof(realnum));
-          allocated_eh = true;
-        }
+          // lazily allocate any E/H fields that are needed (H==B initially)
+          if (i == 0 && f[ec][cmp] == f[dc][cmp] &&
+              (s->chi1inv[ec][d_ec] || have_f_minus_p || dsigw != NO_DIRECTION)) {
+            f[ec][cmp] = new realnum[gv.ntot()];
+            memcpy(f[ec][cmp], f[dc][cmp], gv.ntot() * sizeof(realnum));
+            allocated_eh = true;
+          }
 
-        // lazily allocate W auxiliary field
-        if (i == 0 && !f_w[ec][cmp] && dsigw != NO_DIRECTION) {
-          f_w[ec][cmp] = new realnum[gv.ntot()];
-          memcpy(f_w[ec][cmp], f[ec][cmp], gv.ntot() * sizeof(realnum));
-          if (needs_W_notowned(ec)) allocated_eh = true; // communication needed
-        }
+          // lazily allocate W auxiliary field
+          if (i == 0 && !f_w[ec][cmp] && dsigw != NO_DIRECTION) {
+            f_w[ec][cmp] = new realnum[gv.ntot()];
+            memcpy(f_w[ec][cmp], f[ec][cmp], gv.ntot() * sizeof(realnum));
+            if (needs_W_notowned(ec)) allocated_eh = true; // communication needed
+          }
 
-        // for solve_cw, when W exists we get W and E from special variables
-        if (f_w[ec][cmp] && skip_w_components) continue;
+          // for solve_cw, when W exists we get W and E from special variables
+          if (f_w[ec][cmp] && skip_w_components) continue;
 
-        // save W field from this timestep in f_w_prev if needed by pols
-        if (i == 0 && needs_W_prev(ec)) {
-          if (!f_w_prev[ec][cmp]) f_w_prev[ec][cmp] = new realnum[gv.ntot()];
-          memcpy(f_w_prev[ec][cmp], f_w[ec][cmp] ? f_w[ec][cmp] : f[ec][cmp],
-                 sizeof(realnum) * gv.ntot());
-        }
+          // save W field from this timestep in f_w_prev if needed by pols
+          if (i == 0 && needs_W_prev(ec)) {
+            if (!f_w_prev[ec][cmp]) f_w_prev[ec][cmp] = new realnum[gv.ntot()];
+            memcpy(f_w_prev[ec][cmp], f_w[ec][cmp] ? f_w[ec][cmp] : f[ec][cmp],
+                   sizeof(realnum) * gv.ntot());
+          }
 
-        if (f[ec][cmp] != f[dc][cmp]) {
-          STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
-                           gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
-                           s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
-                           dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                           s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+          if (f[ec][cmp] != f[dc][cmp]) {
+            STEP_UPDATE_EDHB(
+                f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+                gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
+                s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+                dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
+                s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
 
-          if (gv.dim == Dcyl) {
-            ivec is = gvs_eh[ft][i].little_owned_corner(ec);
-            if (is.r() == 0) {
-              ivec ie = gvs_eh[ft][i].big_corner();
-              ie.set_direction(R, 0);
-              /* pass NULL for off-diagonal terms since they must be
-                 zero at r=0 for an axisymmetric structure: */
-              STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
-                               s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
-                               s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+            if (gv.dim == Dcyl) {
+              ivec is = gvs_eh[ft][i].little_owned_corner(ec);
+              if (is.r() == 0) {
+                ivec ie = gvs_eh[ft][i].big_corner();
+                ie.set_direction(R, 0);
+                /* pass NULL for off-diagonal terms since they must be
+                   zero at r=0 for an axisymmetric structure: */
+                STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
+                                 s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
+                                 s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+              }
             }
           }
         }
       }
-    }
+    } // added } here to split the two loop macros
   }
 
   return allocated_eh;
