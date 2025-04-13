@@ -155,7 +155,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
   /// ############### THIS is the loop that needs modifying for Newton Raphson implementation
   for (size_t i = 0; i < gvs_eh[ft].size(); ++i) {
-    DOCMP { // added { here to split the two loop macros
+    DOCMP { /// added { here to split the two loop macros
       FOR_FT_COMPONENTS(ft, ec) {
         if (f[ec][cmp]) {
           if (type(ec) != ft) meep::abort("bug in FOR_FT_COMPONENTS");
@@ -201,30 +201,61 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
                    sizeof(realnum) * gv.ntot());
           }
 
-          if (f[ec][cmp] != f[dc][cmp]) {
-            STEP_UPDATE_EDHB(
-                f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
-                gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
-                s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
-                dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+          if (not chi3) { /// Add this 'if not chi3' (hack, using chi3 as a flag, actual value not relevant so long as it is non-zero for the 2nd order NL material) statement
+                          /// wrapper around this STEP_UPDATE_EDHB, so that the non-nonlinear chunks
+                          /// run field-component-piecewise, 
+            if (f[ec][cmp] != f[dc][cmp]) {
+              STEP_UPDATE_EDHB(
+                  f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+                  gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
+                  s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+                  dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
+                  s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
 
-            if (gv.dim == Dcyl) {
-              ivec is = gvs_eh[ft][i].little_owned_corner(ec);
-              if (is.r() == 0) {
-                ivec ie = gvs_eh[ft][i].big_corner();
-                ie.set_direction(R, 0);
-                /* pass NULL for off-diagonal terms since they must be
-                   zero at r=0 for an axisymmetric structure: */
-                STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
-                                 s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
-                                 s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+              if (gv.dim == Dcyl) {
+                ivec is = gvs_eh[ft][i].little_owned_corner(ec);
+                if (is.r() == 0) {
+                  ivec ie = gvs_eh[ft][i].big_corner();
+                  ie.set_direction(R, 0);
+                  /* pass NULL for off-diagonal terms since they must be
+                     zero at r=0 for an axisymmetric structure: */
+                  STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
+                                   s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
+                                   s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+                }
               }
             }
           }
+
+      
         }
       }
-    } // added } here to split the two loop macros
+    /// then add this copy of STEP_UPDATE_EDHB in an 'if chi3' wrapper, outside the FOR_FT_COMPONENTS loop, to
+          /// handle the NL chunks and pass in all xyz field components in at once.
+      if (chi3) {
+        if (f[ec][cmp] != f[dc][cmp]) {
+          STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+                           gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
+                           s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+                           dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
+                           s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+
+          //if (gv.dim == Dcyl) {
+          //  ivec is = gvs_eh[ft][i].little_owned_corner(ec);
+          //  if (is.r() == 0) {
+          //    ivec ie = gvs_eh[ft][i].big_corner();
+          //    ie.set_direction(R, 0);
+          //    /* pass NULL for off-diagonal terms since they must be
+          //       zero at r=0 for an axisymmetric structure: */
+          //    STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
+          //                     s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
+          //                     s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+          //  }
+          //}
+        }
+      }
+
+    } /// added } here to split the two loop macros
   }
 
   return allocated_eh;
