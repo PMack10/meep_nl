@@ -171,10 +171,10 @@ void step_bfast_stride1(realnum *f, component c, const realnum *g1, const realnu
                          dsigw, dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3)                                                        \
   do {                                                                                             \
     if (LOOPS_ARE_STRIDE1(gv))                                                                     \ 
-      step_update_EDHB_stride1(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw_3, dsigw,  \
+      step_update_EDHB_stride1(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
                        dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
     else                                                                                           \
-      step_update_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw_3, dsigw,  \
+      step_update_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
                        dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
   } while (0)
 
