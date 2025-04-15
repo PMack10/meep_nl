@@ -1464,7 +1464,7 @@ public:
   realnum *f_u[NUM_FIELD_COMPONENTS][2];    // integrated from D/B
   realnum *f_w[NUM_FIELD_COMPONENTS][2];    // E/H integrated from these
   realnum *f_cond[NUM_FIELD_COMPONENTS][2]; // aux field for PML+conductivity
-
+  realnum *fTempNlFieldsForInterpolation[2][2]; // ADDED THESE for NL meep, they hold the x and y field at the Z locations of the yee cell after NewtonRaphson, before interpolation to their correct locations
   realnum *f_bfast[NUM_FIELD_COMPONENTS][2];
 
   /* sometimes, to synchronize the E and H fields, e.g. for computing

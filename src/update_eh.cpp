@@ -153,28 +153,48 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
   }
 
 
+  /// New local field component defs just for convenience:
+     const component ex = Ex;
+  const component ey = Ey;
+  const component ez = Ez; // <<<TODO NEED to verify this, it's unclear how meep is actually
+                           // allocating the fields in the f[component] arrays, because Ez is after
+                           // the cylindrical coordinate cpmnts in the switch
+  //, which confuses things... (Is it accidentally just storing Ez in the Er array when Dcyl is
+  ///false...? I don't think so but it's possible...
+
   /// ############### THIS is the loop that needs modifying for Newton Raphson implementation
   for (size_t i = 0; i < gvs_eh[ft].size(); ++i) {
     DOCMP { /// added { here to split the two loop macros
-      FOR_FT_COMPONENTS(ft, ec) {
+        /// ADDED variable declarations here, so they are in-scope both in AND after FOR_FT_COMPONENTS
+      component dc;
+      const direction d_ec; // Direction of main field component  (e.g. X)
+      const ptrdiff_t s_ec; // stride of main field component
+      const direction d_1; // Direction of next field component (e.g. Y)
+      const component dc_1; // next field component
+      const ptrdiff_t s_1;         // stride of next field component
+      const direction d_2; // '' #2   (e.g. Z)
+      const component dc_2;    // '' #2
+      const ptrdiff_t s_2; // '' #2
+      direction dsigw0;
+      direction dsigw; 
+
+
+      FOR_FT_COMPONENTS(ft, ec) { // For E_Stuff, loop over ec = Ex, Ey, etc
         if (f[ec][cmp]) {
           if (type(ec) != ft) meep::abort("bug in FOR_FT_COMPONENTS");
-          component dc = field_type_component(ft2, ec);
-          const direction d_ec =
-              component_direction(ec); // Direction of main field component  (e.g. X)
-          const ptrdiff_t s_ec =
-              gv.stride(d_ec) * (ft == H_stuff ? -1 : +1); // stride of main field component
-          const direction d_1 =
-              cycle_direction(gv.dim, d_ec, 1); // Direction of next field component (e.g. Y)
-          const component dc_1 = direction_component(dc, d_1); // next field component
-          const ptrdiff_t s_1 =
-              gv.stride(d_1) * (ft == H_stuff ? -1 : +1);         // stride of next field component
-          const direction d_2 = cycle_direction(gv.dim, d_ec, 2); // '' #2   (e.g. Z)
-          const component dc_2 = direction_component(dc, d_2);    // '' #2
-          const ptrdiff_t s_2 = gv.stride(d_2) * (ft == H_stuff ? -1 : +1); // '' #2
+          /// TODO check if these are the right thing when they go into the NL version
+          dc = field_type_component(ft2, ec);
+          d_ec =component_direction(ec); // Direction of main field component  (e.g. X)
+          s_ec =gv.stride(d_ec) * (ft == H_stuff ? -1 : +1); // stride of main field component
+          d_1 =cycle_direction(gv.dim, d_ec, 1); // Direction of next field component (e.g. Y)
+          dc_1 = direction_component(dc, d_1); // next field component
+          s_1 =gv.stride(d_1) * (ft == H_stuff ? -1 : +1);         // stride of next field component
+          d_2 = cycle_direction(gv.dim, d_ec, 2); // '' #2   (e.g. Z)
+          dc_2 = direction_component(dc, d_2);    // '' #2
+          s_2 = gv.stride(d_2) * (ft == H_stuff ? -1 : +1); // '' #2
+          dsigw0 = d_ec;  
+          dsigw = s->sigsize[dsigw0] > 1 ? dsigw0 : NO_DIRECTION; 
 
-          direction dsigw0 = d_ec;
-          direction dsigw = s->sigsize[dsigw0] > 1 ? dsigw0 : NO_DIRECTION;
 
           // lazily allocate any E/H fields that are needed (H==B initially)
           if (i == 0 && f[ec][cmp] == f[dc][cmp] &&
@@ -201,59 +221,115 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
                    sizeof(realnum) * gv.ntot());
           }
 
-          if (not chi3) { /// Add this 'if not chi3' (hack, using chi3 as a flag, actual value not relevant so long as it is non-zero for the 2nd order NL material) statement
-                          /// wrapper around this STEP_UPDATE_EDHB, so that the non-nonlinear chunks
-                          /// run field-component-piecewise, 
+          if (!s->chi3[ec] || ft == H_stuff ) { /// Add this 'if not chi3' (hack, using chi3 as a flag, actual
+                                 /// value not relevant so long as it is non-zero for the 2nd order
+                                 /// NL material) statement wrapper around this STEP_UPDATE_EDHB, so that the non-nonlinear chunks
+                          /// run field-component-piecewise. TODO need to check s->chi3[ec] does what I want tho.
+/// TODO may be worth making a CHECKPOINT here print ft to check H_stuff isn't going into NR loop...
             if (f[ec][cmp] != f[dc][cmp]) {
-              STEP_UPDATE_EDHB(
-                  f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+              STEP_UPDATE_EDHB( 
+                  f[ec][cmp], NULL, NULL, ec, gv, gvs_eh[ft][i].little_owned_corner0(ec), NULL, NULL,
                   gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
-                  s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+                  s->chi1inv[ec][d_ec], NULL, NULL, dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
                   dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                  s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+                  s->chi3[ec], f_w[ec][cmp], NULL, NULL, NULL, NULL, dsigw, NULL, NULL,
+                  s->sig[dsigw], NULL, NULL, s->kap[dsigw], NULL, NULL); 
 
-              if (gv.dim == Dcyl) {
-                ivec is = gvs_eh[ft][i].little_owned_corner(ec);
-                if (is.r() == 0) {
-                  ivec ie = gvs_eh[ft][i].big_corner();
-                  ie.set_direction(R, 0);
-                  /* pass NULL for off-diagonal terms since they must be
-                     zero at r=0 for an axisymmetric structure: */
-                  STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
-                                   s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
-                                   s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
-                }
-              }
+              // Dcyl not implemented for NL materials (yet...)
+              //if (gv.dim == Dcyl) {
+              //  ivec is = gvs_eh[ft][i].little_owned_corner(ec);
+              //  if (is.r() == 0) {
+              //    ivec ie = gvs_eh[ft][i].big_corner();
+              //    ie.set_direction(R, 0);
+              //    /* pass NULL for off-diagonal terms since they must be
+              //       zero at r=0 for an axisymmetric structure: */
+              //    STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
+              //                     s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
+              //                     s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+              //  }
+              //}
             }
           }
 
       
         }
-      }
-    /// then add this copy of STEP_UPDATE_EDHB in an 'if chi3' wrapper, outside the FOR_FT_COMPONENTS loop, to
-          /// handle the NL chunks and pass in all xyz field components in at once.
-      if (chi3) {
-        if (f[ec][cmp] != f[dc][cmp]) {
-          STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
-                           gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
-                           s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
-                           dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                           s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+      } /// The FOR_FT_COMPONENTS loop should close out on ec = Ez, therefore for convenience, start the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
+    ///the 'auxiliaries' which are to be calculated by interpolation...
+    
 
-          //if (gv.dim == Dcyl) {
-          //  ivec is = gvs_eh[ft][i].little_owned_corner(ec);
-          //  if (is.r() == 0) {
-          //    ivec ie = gvs_eh[ft][i].big_corner();
-          //    ie.set_direction(R, 0);
-          //    /* pass NULL for off-diagonal terms since they must be
-          //       zero at r=0 for an axisymmetric structure: */
-          //    STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
-          //                     s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
-          //                     s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
-          //  }
-          //}
+    /// START OF NL VERSION OF STEP_UPDATE_EDHB>>>>>>>>> This is outside the FOR_FT_COMPONENTS loop becasue we're doing all 3 field components at once in the NR solver!
+    /// TODO this bit is only for the PML case [is it??], need another one where it's not pml case..?
+          /// handle the NL chunks and pass in all xyz field components in at once.
+      if (s->chi3[ez] && ft == E_stuff) { /// again using chi3 purely as a flag, not an actual value
+                                          /// of chi3... TODO check s->chi3[ec] 
+       if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
+
+            //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
+            //  std::cout << "ec != ez!! ec:" << ec
+            //            << std::endl; /// TODO, ec might not print as a variable I suppose...
+            //                          /// depends on it's type.
+            //  meep::abort("ec != ez!! ec:");
+            //}
+
+            /// Now need to create the two extra temp Z dimensioned field arrays for storing Ex and
+            /// Ey at the Z positions (for subsequent interpolation to their correct positions)
+            // lazily allocate the two temp extra Z-dimensioned W auxiliary fields:
+            if (i == 0 && !fTempNlFieldsForInterpolation[0][cmp]) {
+              fTempNlFieldsForInterpolation[0][cmp] =
+                  new realnum[gv.ntot()]; // for temp Ex at Z positions fields
+              fTempNlFieldsForInterpolation[1][cmp] =
+                  new realnum[gv.ntot()]; // for temp Ey at Z positions fields
+            }
+
+            direction dsigw0_2 = d_1; /// X  Additional dsigw terms for other two field directions
+            direction dsigw_2 = s->sigsize[dsigw0] > 1 ? dsigw0_2 : NO_DIRECTION;
+            direction dsigw0_3 = d_2; /// Y
+            direction dsigw_3 = s->sigsize[dsigw0] > 1 ? dsigw0_3 : NO_DIRECTION;
+
+            /// Now do nonlinear xyz e field step update:  /// TODO! need to ensure correct 'ec'
+            /// components go into all these (i.e, z, x, y)
+         if (f[ec][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
+                                            // probs? TODO - leave for now, see what happens
+          STEP_UPDATE_EDHB(f[ez][cmp], f[ex][cmp], f[ey][cmp],
+              ez, gv, 
+              gvs_eh[ft][i].little_owned_corner0(ez), 
+              gvs_eh[ft][i].little_owned_corner0(ex),
+              gvs_eh[ft][i].little_owned_corner0(ey), 
+              gvs_eh[ft][i].big_corner(), 
+              dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp], //TODO check these dmp field compoennts
+              s->chi1inv[ez][component_direction(ez)], s->chi1inv[ex][component_direction(ex)], s->chi1inv[ey][component_direction(ey)], // principal epsilon (inverse) components
+              dmp[dc_1][cmp] ? s->chi1inv[ez][d_1] : NULL, dmp[dc_2][cmp] ? s->chi1inv[ez][d_2] : NULL, //TODO check - think these should be fine as they are the offdiag ones
+              s_ec, s_1, s_2, /// strides of Z, X, and Y directions respectively
+              s->chi2[ez], s->chi3[ez], 
+              f_w[ez][cmp], fTempNlFieldsForInterpolation[0][cmp],
+                    fTempNlFieldsForInterpolation[1][cmp], f_w[ex][cmp], f_w[ey][cmp],                    
+              dsigw, dsigw_2, dsigw_3, 
+              s->sig[dsigw], s->sig[dsigw_2], s->sig[dsigw_3],
+              s->kap[dsigw], s->kap[dsigw_2], s->kap[dsigw_3]);
+
+          /// TODO will also then need to update the .hpp definition for step_update_EDHB() etc...
+
+          /// Added to fn:    f[component Ey][cmp], f[component Ez][cmp],
+          /// s->chi1inv[ex][component_direction(ex)], s->chi1inv[ey][component_direction(ey)],
+          ///                   fTempNlFieldsForInterpolation[0][cmp],
+          ///                   fTempNlFieldsForInterpolation[1][cmp], f_w[ex][cmp], f_w[ey][cmp],
+
+          /// Dcyl not currently implmented for nl...
+          // if (gv.dim == Dcyl) {
+          //   ivec is = gvs_eh[ft][i].little_owned_corner(ec);
+          //   if (is.r() == 0) {
+          //     ivec ie = gvs_eh[ft][i].big_corner();
+          //     ie.set_direction(R, 0);
+          //     /* pass NULL for off-diagonal terms since they must be
+          //        zero at r=0 for an axisymmetric structure: */
+          //     STEP_UPDATE_EDHB(f[ec][cmp], ec, gv, is, ie, dmp[dc][cmp], NULL, NULL,
+          //                      s->chi1inv[ec][d_ec], NULL, NULL, s_ec, s_1, s_2, s->chi2[ec],
+          //                      s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+          //   }
+          // }
+          }
         }
-      }
+      } /// end of new NL stuff
 
     } /// added } here to split the two loop macros
   }

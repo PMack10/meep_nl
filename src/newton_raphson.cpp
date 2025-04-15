@@ -1,8 +1,10 @@
 #include <iostream>
 #include <cmath>
 #include <iomanip>
-#include <random>
+//#include <random> 
 #include <vector>
+#include "newton_raphson.hpp"
+#include "meep.hpp"
 
 /*
 Algorithm for solving set of three coupled nonlinear quadratic forms for
@@ -18,13 +20,18 @@ including nonlinear 'chi type' polarisations)
 
 using namespace std;
 
+
+namespace meep {
+
+
+
 const double TOLERANCE = 1e-14;
 const int MAX_ITERATIONS = 100;
 
-// Struct to hold constant parameters for each equation
-struct Parameters {
-  double A, B, C, D, E, F, G, H;
-};
+//// Struct to hold constant parameters for each equation
+//struct Parameters { // moved to .hpp??!
+//  double A, B, C, D, E, F, G, H;
+//};
 
 // Function definitions
 vector<double> equations(double x, double y, double z, const Parameters &p1, const Parameters &p2,
@@ -80,8 +87,10 @@ int rank3x3(const vector<vector<double> > &M) {
   return 1;
 }
 
-void newtonMethod(double x, double y, double z, const Parameters &p1, const Parameters &p2,
-                  const Parameters &p3) {
+vector<double> newtonRaphson(double x, double y, double z, const Parameters &p1,
+                             const Parameters &p2, const Parameters &p3,  realnum fw,
+                             realnum fw_2,
+                             realnum fw_3) {
   for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
     vector<double> F = equations(x, y, z, p1, p2, p3);
     vector<vector<double> > J = jacobian(x, y, z, p1, p2, p3);
@@ -91,7 +100,7 @@ void newtonMethod(double x, double y, double z, const Parameters &p1, const Para
     double detJ = determinant3x3(J);
     if (detJ == 0) {
       cout << "Jacobian determinant is 0: The system has dependent or singular solutions at (" << x
-           << ", " << y << ", " << z << ")" << endl;
+           << ", " << y << ", " << z << ")!" << endl;
     }
     // END CHECK
 
@@ -102,9 +111,12 @@ void newtonMethod(double x, double y, double z, const Parameters &p1, const Para
     z -= delta[2];
 
     if (fabs(delta[0]) < TOLERANCE && fabs(delta[1]) < TOLERANCE && fabs(delta[2]) < TOLERANCE) {
-      cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
-      cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
-      return;
+   //   cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
+   //   cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
+      fw = x; /// Update E field values!
+   fw_2 = y;
+      fw_3 = z;
+      return vector<double>;
     }
   }
   cout << "Newton's method did not converge within " << MAX_ITERATIONS << " iterations.\n";
@@ -156,52 +168,32 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
   return x;
 }
 
-//double getRandomNumber() {
-//  static random_device rd;                                      // Obtain a random seed
-//  static mt19937 gen(rd());                                     // Seed the generator
-//  static uniform_real_distribution<double> dist(-100.0, 100.0); // Define range
-//
-//  return dist(gen);
-//}
-//
 
+void runNR(double seed1, double seed2, double seed3, realnum fw, realnum fw_2, realnum fw_3,
+           const Parameters &p1, const Parameters &p2,
+           const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
+        
+    cout << "Doing NR" << endl;
 
-//int main() {
-//  Parameters p1 = {28, 3.2, 0, 0, 0, 0.000002, 0, 0};
-//  Parameters p2 = {-77, 3.2, 0, 0, 0, 0, 0.000002, 0};
-//  Parameters p3 = {-1.4546, 3.2, 0, 0, 0, 0, 0, 0.000002};
-//
-//  //  double x0 = 0.5, y0 = 0.5, z0 = 0.5;
-//  //  newtonMethod(x0, y0, z0, p1, p2, p3);
-//
-//  for (int i = 0, imax = 10; i < imax; ++i) {
-//
-//    double a = getRandomNumber();
-//    double b = getRandomNumber();
-//    double c = getRandomNumber();
-//    double x0 = getRandomNumber();
-//    double y0 = getRandomNumber();
-//    double z0 = getRandomNumber();
-//
-//    // CHECK 2:
-//    vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
-//    int rankM = rank3x3(M);
-//    if (rankM < 3) {
-//      cout << "Coefficient matrix has rank < 3: The system is globally dependent." << endl;
-//      break;
-//    }
-//    // END CHECK 2
-//
-//    std::cout << "Seeds: x0:" << x0 << "    y0:" << y0 << "   z0:" << z0 << std::endl;
-//    std::cout << "D-P: a:" << a << "    b:" << b << "   c:" << c << std::endl;
-//
-//    Parameters p1 = {a, 3.2, 0, 0, 0, 0.000002, 0, 0};
-//    Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
-//    Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
-//
-//    newtonMethod(x0, y0, z0, p1, p2, p3);
-//  }
-//
-//  return 0;
-//}
+      // CHECK 2:
+      vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
+      int rankM = rank3x3(M);
+      if (rankM < 3) {
+        cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
+        break;
+      }
+      // END CHECK 2
+      //std::cout << "Seeds: x0:" << x0 << "    y0:" << y0 << "   z0:" << z0 << std::endl;
+      //std::cout << "D-P: a:" << a << "    b:" << b << "   c:" << c << std::endl;
+      //Parameters p1 = {a, 3.2, 0, 0, 0, 0.000002, 0, 0}; // p1.A is the D-P field
+      //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
+      //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
+  
+      newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw,  fw_2,  fw_3); 
+    
+    
+  }
+
+}
+
 

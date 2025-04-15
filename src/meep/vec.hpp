@@ -1100,7 +1100,7 @@ public:
   /* differs from little_owned_corner in that it doesn't count
      "ownership" of the r=0 origin for Dcyl, which is updated separately */
   ivec little_owned_corner0(component c) const {
-    return ivec(little_corner() + one_ivec(dim) * 2 - iyee_shift(c));
+    return ivec(little_corner() + one_ivec(dim) * 2 - iyee_shift(c)); // adds a [1,1,1] direction ivec, then subtracts a unit ivec in direction c (e.g. [0,0,1] if c = Z)
   }
 
   ivec little_owned_corner(component c) const;
@@ -1129,9 +1129,10 @@ public:
     gv.pad_self(d);
     return gv;
   }
-  ivec iyee_shift(component c) const {
+
+  ivec iyee_shift(component c) const { // returns a unit ivec in the direction of the component
     ivec out = zero_ivec(dim);
-    LOOP_OVER_DIRECTIONS(dim, d)
+    LOOP_OVER_DIRECTIONS(dim, d) // returns x, y, z, ...
     if (c == Dielectric || c == Permeability ||
         ((is_electric(c) || is_D(c)) && d == component_direction(c)) ||
         ((is_magnetic(c) || is_B(c)) && d != component_direction(c)))

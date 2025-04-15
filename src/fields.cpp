@@ -181,6 +181,7 @@ fields_chunk::~fields_chunk() {
     delete[] f_cond_backup[c][cmp];
     delete[] f_bfast_backup[c][cmp];
   }
+    delete[] fTempNlFieldsForInterpolation;  // destruct the arrays made for NL field storage...
   delete[] f_rderiv_int;
   while (dft_chunks) {
     dft_chunk *nxt = dft_chunks->next_in_chunk;
@@ -277,6 +278,10 @@ fields_chunk::fields_chunk(structure_chunk *the_s, const char *od, double m, dou
   }
   doing_solve_cw = false;
   solve_cw_omega = 0.0;
+  DOCMP2 {/// ADDED this for NL stuff
+    fTempNlFieldsForInterpolation[0][cmp] = NULL; //init them to Null so we can check later and init if necessary 'on the fly'
+    fTempNlFieldsForInterpolation[1][cmp] = NULL;
+  }
   FOR_COMPONENTS(c) DOCMP2 {
     f[c][cmp] = NULL;
     f_u[c][cmp] = NULL;
@@ -335,6 +340,11 @@ fields_chunk::fields_chunk(const fields_chunk &thef, int chunkidx) : gv(thef.gv)
   }
   doing_solve_cw = thef.doing_solve_cw;
   solve_cw_omega = thef.solve_cw_omega;
+  
+  DOCMP2 { /// ADDED this for NL stuff
+    fTempNlFieldsForInterpolation[0][cmp] =NULL; // init them to Null so we can check later and init if necessary 'on the fly'
+    fTempNlFieldsForInterpolation[1][cmp] = NULL;
+  }
   FOR_COMPONENTS(c) DOCMP2 {
     f[c][cmp] = NULL;
     f_u[c][cmp] = NULL;
