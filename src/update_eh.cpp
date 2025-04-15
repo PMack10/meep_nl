@@ -231,7 +231,8 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 /// TODO may be worth making a CHECKPOINT here print ft to check H_stuff isn't going into NR loop...
             if (f[ec][cmp] != f[dc][cmp]) {
               STEP_UPDATE_EDHB( 
-                  f[ec][cmp], nullptr, nullptr, ec, gv, gvs_eh[ft][i].little_owned_corner0(ec), nullptr, nullptr,
+                  f[ec][cmp], nullptr, nullptr, ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+                  zero_ivec(gv.dim), zero_ivec(gv.dim), // couple empty placeholder ivecs
                   gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp], s->chi1inv[ec][d_ec], nullptr, nullptr,
                   dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
                   dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
