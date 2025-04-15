@@ -181,7 +181,7 @@ fields_chunk::~fields_chunk() {
     delete[] f_cond_backup[c][cmp];
     delete[] f_bfast_backup[c][cmp];
   }
-    delete[] fTempNlFieldsForInterpolation;  // destruct the arrays made for NL field storage...
+  delete[] fTempNlFieldsForInterpolation;  // destruct the arrays made for NL field storage... // TODO compiler threw a warning on this for some reason...
   delete[] f_rderiv_int;
   while (dft_chunks) {
     dft_chunk *nxt = dft_chunks->next_in_chunk;

@@ -99,7 +99,7 @@ void step_update_EDHB(realnum *f, realnum *f_2, realnum *f_3,  component fc, con
                       const realnum *g, const realnum *g1, const realnum *g2, const realnum *u,
                       const realnum *u_2, const realnum *u_3, const realnum *u1, const realnum *u2, 
                        ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2,
-                      const realnum *chi2, const realnum *chi3, realnum *fw, realnum *fw_2_atZ, realnum *f2_3_atZ, realnum fw_2, realnum fw_3,
+                      const realnum *chi2, const realnum *chi3, realnum *fw, realnum *fw_2_atZ, realnum *f2_3_atZ, realnum *fw_2, realnum *fw_3,
                       direction dsigw, direction dsigw_2,direction dsigw_3,
                       const realnum *sigw,const realnum *sigw_2, const realnum *sigw_3, 
                         const realnum *kapw, const realnum *kapw_2, const realnum *kapw_3);
@@ -126,12 +126,16 @@ void step_curl_stride1(realnum *f, component c, const realnum *g1, const realnum
                        const realnum *kapu, const realnum *siginvu, realnum dt, const realnum *cnd,
                        const realnum *cndinv, realnum *fcnd);
 
-void step_update_EDHB_stride1(realnum *f, component fc, const grid_volume &gv, const ivec is,
-                              const ivec ie, const realnum *g, const realnum *g1, const realnum *g2,
-                              const realnum *u, const realnum *u1, const realnum *u2, ptrdiff_t s,
+void step_update_EDHB_stride1(realnum *f, realnum *f_2, realnum *f_3, component fc,
+                              const grid_volume &gv, const ivec is, const ivec is_2,
+                              const ivec is_3, const ivec ie, const realnum *g, const realnum *g1,
+                              const realnum *g2, const realnum *u, const realnum *u_2,
+                              const realnum *u_3, const realnum *u1, const realnum *u2, ptrdiff_t s,
                               ptrdiff_t s1, ptrdiff_t s2, const realnum *chi2, const realnum *chi3,
-                              realnum *fw, direction dsigw, const realnum *sigw,
-                              const realnum *kapw);
+                              realnum *fw, realnum *fw_2_atZ, realnum *f2_3_atZ, realnum *fw_2,
+                              realnum *fw_3, direction dsigw, direction dsigw_2, direction dsigw_3,
+                              const realnum *sigw, const realnum *sigw_2, const realnum *sigw_3,
+                              const realnum *kapw, const realnum *kapw_2, const realnum *kapw_3);
 
 void step_beta_stride1(realnum *f, component c, const realnum *g, const grid_volume &gv,
                        const ivec is, const ivec ie, realnum betadt, direction dsig,
@@ -167,10 +171,10 @@ void step_bfast_stride1(realnum *f, component c, const realnum *g1, const realnu
                          dsigw, dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3)                                                        \
   do {                                                                                             \
     if (LOOPS_ARE_STRIDE1(gv))                                                                     \ 
-      step_update_EDHB_stride1(f, fc, gv, is, ie, g, g1, g2, u, u1, u2, s, s1, s2, chi2, chi3, fw, \
-                               dsigw, sigw, kapw);                                                 \
+      step_update_EDHB_stride1(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw_3, dsigw,  \
+                       dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
     else                                                                                           \
-      step_update_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw, dsigw,  \
+      step_update_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw_3, dsigw,  \
                        dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
   } while (0)
 

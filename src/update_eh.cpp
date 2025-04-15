@@ -165,18 +165,21 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
   /// ############### THIS is the loop that needs modifying for Newton Raphson implementation
   for (size_t i = 0; i < gvs_eh[ft].size(); ++i) {
     DOCMP { /// added { here to split the two loop macros
-        /// ADDED variable declarations here, so they are in-scope both in AND after FOR_FT_COMPONENTS
-      component dc;
-      const direction d_ec; // Direction of main field component  (e.g. X)
-      const ptrdiff_t s_ec; // stride of main field component
-      const direction d_1; // Direction of next field component (e.g. Y)
-      const component dc_1; // next field component
-      const ptrdiff_t s_1;         // stride of next field component
-      const direction d_2; // '' #2   (e.g. Z)
-      const component dc_2;    // '' #2
-      const ptrdiff_t s_2; // '' #2
-      direction dsigw0;
-      direction dsigw; 
+      /// ADDED variable declarations here (and placeholder inits), so they are in-scope both in AND
+      /// after FOR_FT_COMPONENTS
+      component ecInLoop = ex;
+        component dc=field_type_component(D_stuff, ex);
+       direction d_ec=component_direction(ex); // Direction of main field component  (e.g. X)
+       ptrdiff_t s_ec = gv.stride(d_ec);           // stride of main field component
+       direction d_1 = cycle_direction(gv.dim, d_ec, 1); // Direction of next field component (e.g. Y)
+       component dc_1 = direction_component(dc, d_1); // next field component
+       ptrdiff_t s_1 = gv.stride(d_1);                   // stride of next field component
+       direction d_2 = cycle_direction(gv.dim, d_ec, 2); // '' #2   (e.g. Z)
+       component dc_2 = direction_component(dc, d_2);    // '' #2
+       ptrdiff_t s_2 = gv.stride(d_2);                   // '' #2
+      direction dsigw0 = d_ec;
+      direction dsigw = NO_DIRECTION; 
+
 
 
       FOR_FT_COMPONENTS(ft, ec) { // For E_Stuff, loop over ec = Ex, Ey, etc
@@ -194,7 +197,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           s_2 = gv.stride(d_2) * (ft == H_stuff ? -1 : +1); // '' #2
           dsigw0 = d_ec;  
           dsigw = s->sigsize[dsigw0] > 1 ? dsigw0 : NO_DIRECTION; 
-
+          ecInLoop = ec;
 
           // lazily allocate any E/H fields that are needed (H==B initially)
           if (i == 0 && f[ec][cmp] == f[dc][cmp] &&
@@ -228,12 +231,12 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 /// TODO may be worth making a CHECKPOINT here print ft to check H_stuff isn't going into NR loop...
             if (f[ec][cmp] != f[dc][cmp]) {
               STEP_UPDATE_EDHB( 
-                  f[ec][cmp], NULL, NULL, ec, gv, gvs_eh[ft][i].little_owned_corner0(ec), NULL, NULL,
-                  gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
-                  s->chi1inv[ec][d_ec], NULL, NULL, dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+                  f[ec][cmp], nullptr, nullptr, ec, gv, gvs_eh[ft][i].little_owned_corner0(ec), nullptr, nullptr,
+                  gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp], s->chi1inv[ec][d_ec], nullptr, nullptr,
+                  dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
                   dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                  s->chi3[ec], f_w[ec][cmp], NULL, NULL, NULL, NULL, dsigw, NULL, NULL,
-                  s->sig[dsigw], NULL, NULL, s->kap[dsigw], NULL, NULL); 
+                  s->chi3[ec], f_w[ec][cmp], nullptr, nullptr, nullptr, nullptr, dsigw, nullptr, nullptr,
+                  s->sig[dsigw], nullptr, nullptr, s->kap[dsigw], nullptr, nullptr); 
 
               // Dcyl not implemented for NL materials (yet...)
               //if (gv.dim == Dcyl) {
@@ -288,7 +291,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
             /// Now do nonlinear xyz e field step update:  /// TODO! need to ensure correct 'ec'
             /// components go into all these (i.e, z, x, y)
-         if (f[ec][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
+         if (f[ecInLoop][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
                                             // probs? TODO - leave for now, see what happens
           STEP_UPDATE_EDHB(f[ez][cmp], f[ex][cmp], f[ey][cmp],
               ez, gv, 
