@@ -235,8 +235,8 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
                   zero_ivec(gv.dim), zero_ivec(gv.dim), // couple empty placeholder ivecs
                   gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp], s->chi1inv[ec][d_ec], nullptr, nullptr,
                   dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
-                  dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
-                  s->chi3[ec], f_w[ec][cmp], nullptr, nullptr, nullptr, nullptr, dsigw, nullptr, nullptr,
+                  dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec], s->chi3[ec], f_w[ec][cmp], nullptr, nullptr, nullptr,
+                               nullptr, dsigw, NO_DIRECTION, NO_DIRECTION,
                   s->sig[dsigw], nullptr, nullptr, s->kap[dsigw], nullptr, nullptr); 
 
               // Dcyl not implemented for NL materials (yet...)
