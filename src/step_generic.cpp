@@ -569,7 +569,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
                       const ivec ie, const RPR g, const RPR g1, const RPR g2, const RPR u,
                       const RPR u_2, const RPR u_3, const RPR u1, const RPR u2,
                       ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2,
-                      const RPR chi2, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2,
+                      const RPR chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2,
                       RPR fw_3,
                       direction dsigw, direction dsigw_2, direction dsigw_3,
                       const RPR sigw, const RPR sigw_2, const RPR sigw_3,
@@ -617,7 +617,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
           /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each other. The Ex and Ey fields at the correct yee cell locations 
           /// must therefore subsequently calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
 
-        PLOOP_OVER_IVECS(gv, is, ie, i) {// TODO  need to verify if i is the same for x, y, and z ( cos depends on littleownedcorner)
+        PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX
@@ -629,13 +629,13 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum us_3 = 1 / u_3[i];
 
             /// #will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2, 0, 0 } etc;
-            Parameters p1 = {gs_2, us_2, 0, 0, 0, chi2[i], 0, 0};  // X 
-            Parameters p2 = {gs_3, us_3, 0, 0, 0, 0, chi2[i], 0};   // Y
-            Parameters p3 = {gs, us,     0, 0, 0, 0, 0, chi2[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
+            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
+            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+            Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed1 = fw[i];
-            realnum seed2 = fw_2_atZ[i]; //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
-            realnum seed3 = fw_3_atZ[i];
+            realnum seed1 = 243.5;       // fw[i];
+            realnum seed2 = 34.5;//fw_2_atZ[i]; //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed3 = 63.4; //fw_3_atZ[i];
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
@@ -714,7 +714,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
           fw[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
-                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2new[i], chi3[i]);
           f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
         }
       }
@@ -743,7 +743,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             DEF_kw;
             realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
             fw[i] = (gs * us) * calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us,
-                                                 chi2[i], chi3[i]);
+                                                 chi2new[i], chi3[i]);
             f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
           }
         }
@@ -755,7 +755,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             DEF_kw;
             realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
             fw[i] = (gs * us) *
-                    calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+                    calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2new[i], chi3[i]);
             f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
           }
         }
@@ -766,7 +766,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum us = u[i];
             DEF_kw;
             realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
-            fw[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2[i], chi3[i]);
+            fw[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2new[i], chi3[i]);
             f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
           }
         }
@@ -814,14 +814,14 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum us_2 = 1 / u_2[i]; 
             realnum us_3 = 1 / u_3[i];
 
-            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2, 0, 0 } etc;
-            Parameters p1 = {gs_2, us_2, 0, 0, 0, chi2[i], 0, 0};  // X 
-            Parameters p2 = {gs_3, us_3, 0, 0, 0, 0, chi2[i], 0};   // Y
-            Parameters p3 = {gs, us,     0, 0, 0, 0, 0, chi2[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
+            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
+            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
+            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+            Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed1 = f[i];
-            realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
-            realnum seed3 = fw_3_atZ[i];
+            realnum seed1 = 14.5; // f[i];
+            realnum seed2 = 35.4; // fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed3 = 25.2; // fw_3_atZ[i];
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
@@ -874,7 +874,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
-                 calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+                 calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2new[i], chi3[i]);
         }
       }
       else {
@@ -897,7 +897,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum gs = g[i];
             realnum us = u[i];
             f[i] = (gs * us) * calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us,
-                                                chi2[i], chi3[i]);
+                                                chi2new[i], chi3[i]);
           }
         }
         else if (g1) {
@@ -906,7 +906,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum gs = g[i];
             realnum us = u[i];
             f[i] = (gs * us) *
-                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2new[i], chi3[i]);
           }
         }
         else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
@@ -914,7 +914,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
-            f[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2[i], chi3[i]);
+            f[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2new[i], chi3[i]);
           }
         }
       }

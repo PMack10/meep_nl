@@ -169,7 +169,7 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
 }
 
 
-void runNR(double seed1, double seed2, double seed3, realnum fw, realnum fw_2, realnum fw_3,
+void runNR(realnum seed1, realnum seed2, realnum seed3, realnum fw, realnum fw_2, realnum fw_3,
            const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
@@ -181,7 +181,7 @@ void runNR(double seed1, double seed2, double seed3, realnum fw, realnum fw_2, r
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
         cout << " s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << fw << " fw2" << fw_2<< "fw3" << fw_3 << endl;
-        cout << " p1"<< p1.A<< p1.B<<p1.F << endl;
+        cout << " p1A" << p1.A << " p1B" << p1.B << " p1F" << p1.F << endl;
            
       return;
       }
