@@ -14,7 +14,7 @@
 %  along with this program; if not, write to the Free Software Foundation,
 %  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-
+#include <iostream>
 #include "meep.hpp"
 #include "meep_internals.hpp"
 #include "config.h"
@@ -819,8 +819,8 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed1 =  f[i];
-            realnum seed2 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed2 =  f[i];
+            realnum seed1 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 =fw_3_atZ[i];
 
                     cout << "PRENR s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << fw << " fw2"
