@@ -87,7 +87,7 @@ int rank3x3(const vector<vector<double> > &M) {
   return 1;
 }
 
-vector<double> newtonRaphson(double x, double y, double z, const Parameters &p1,
+void newtonRaphson(double x, double y, double z, const Parameters &p1,
                              const Parameters &p2, const Parameters &p3,  realnum fw,
                              realnum fw_2,
                              realnum fw_3) {
@@ -116,7 +116,7 @@ vector<double> newtonRaphson(double x, double y, double z, const Parameters &p1,
       fw = x; /// Update E field values!
    fw_2 = y;
       fw_3 = z;
-      return vector<double>;
+      return;
     }
   }
   cout << "Newton's method did not converge within " << MAX_ITERATIONS << " iterations.\n";
@@ -180,7 +180,7 @@ void runNR(double seed1, double seed2, double seed3, realnum fw, realnum fw_2, r
       int rankM = rank3x3(M);
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
-        break;
+      return;
       }
       // END CHECK 2
       //std::cout << "Seeds: x0:" << x0 << "    y0:" << y0 << "   z0:" << z0 << std::endl;
