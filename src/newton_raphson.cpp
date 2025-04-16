@@ -168,6 +168,10 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
   return x;
 }
 
+void checkType(const T &var) {
+  std::cout << "Is pointer? " << (std::is_pointer<T>::value ? "Yes" : "No") << std::endl;
+}
+
 
 void runNR(realnum seed1, realnum seed2, realnum seed3, realnum fw, realnum fw_2, realnum fw_3,
            const Parameters &p1, const Parameters &p2,
