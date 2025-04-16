@@ -15,7 +15,7 @@ struct Parameters {
 
 
 // Top-level function to run the Newton-Raphson solver
-void runNR(realnum seed1, realnum seed2, realnum seed3, realnum *restrict fw, realnum *restrict fw_2, realnum *restrict fw_3,
+void runNR(realnum seed1, realnum seed2, realnum seed3, realnum*  fw, realnum*  fw_2, realnum*  fw_3,
            const meep::Parameters &p1, const meep::Parameters &p2, const meep::Parameters &p3);
 
 
