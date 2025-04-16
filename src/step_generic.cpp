@@ -639,7 +639,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-            runNR(seed2, seed3, seed1, fw_2_atZ[i], fw_3_atZ[i], fw[i], p1, p2, p3); 
+            runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &fw[i], p1, p2, p3); 
 
             // Do the other fields for PML (whatever they do exactly..)
             DEF_kw; ///TODO  - might not be relevant because its for PML and PML won't use this implementation so long as we don't have a chi3(flag) defined within a PML layer?!
@@ -828,8 +828,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-            runNR(seed2, seed3, seed1, fw_3_atZ[i], fw_2_atZ[i], f[i], p1, p2,
-                  p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
+            runNR(seed2, seed3, seed1, &fw_3_atZ[i], &fw_2_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
                                        }
 
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
