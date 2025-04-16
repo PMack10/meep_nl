@@ -4,7 +4,7 @@
 #include <vector>
 
 
-#define RPR realnum *restrict
+//#define RPR realnum *restrict
 
 namespace meep {
 
@@ -15,7 +15,8 @@ struct Parameters {
 
 
 // Top-level function to run the Newton-Raphson solver
-void runNR(realnum seed1, realnum seed2, realnum seed3, RPR fw, RPR fw_2, RPR fw_3,
+void runNR(realnum seed1, realnum seed2, realnum seed3, realnum *restrict fw,
+           realnum *restrict fw_2, realnum *restrict fw_3,
            const meep::Parameters &p1, const meep::Parameters &p2, const meep::Parameters &p3);
 
 
