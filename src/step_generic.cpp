@@ -20,7 +20,7 @@
 #include "config.h"
 #include "newton_raphson.hpp"
 
-//#define RPR realnum *restrict
+#define RPR realnum *restrict
 
 using namespace std;
 

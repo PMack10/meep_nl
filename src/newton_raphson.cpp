@@ -6,6 +6,9 @@
 #include "newton_raphson.hpp"
 #include "meep.hpp"
 
+#define RPR realnum *restrict
+
+
 /*
 Algorithm for solving set of three coupled nonlinear quadratic forms for
 deriving E from D field in cases where full Chi2 tensor is required:
@@ -168,13 +171,8 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
   return x;
 }
 
-void checkType(const T &var) {
-  std::cout << "Is pointer? " << (std::is_pointer<T>::value ? "Yes" : "No") << std::endl;
-}
 
-
-void runNR(realnum seed1, realnum seed2, realnum seed3, RPR fw, RPR fw_2, RPR fw_3,
-           const Parameters &p1, const Parameters &p2,
+void runNR(realnum seed1, realnum seed2, realnum seed3, RPR fw, RPR fw_2, RPR fw_3, const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
   //  cout << "Doing NR" << endl;
