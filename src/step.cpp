@@ -80,7 +80,7 @@ void fields::step() {
     auto step_timer = with_timing_scope(BoundarySteppingWH);
     step_boundaries(WH_stuff);
   }
-  cout << "DOING UPDATE POLS AND STEPPING STUFF.... 2" << endl;
+ // cout << "DOING UPDATE POLS AND STEPPING STUFF.... 2" << endl;
   update_pols(H_stuff);
   {
     auto step_timer = with_timing_scope(BoundarySteppingPH);

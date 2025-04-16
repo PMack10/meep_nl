@@ -173,13 +173,16 @@ void runNR(double seed1, double seed2, double seed3, realnum fw, realnum fw_2, r
            const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
-    cout << "Doing NR" << endl;
+  //  cout << "Doing NR" << endl;
 
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
       int rankM = rank3x3(M);
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
+        cout << " s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << fw << " fw2" << fw_2<< "fw3" << fw_3 << endl;
+        cout << " p1"<< p1<< p1.A<< p1.B<<p1.F << endl;
+           
       return;
       }
       // END CHECK 2
