@@ -6,7 +6,7 @@
 #include "newton_raphson.hpp"
 #include "meep.hpp"
 
-#define RPR realnum *restrict
+#define RPR realnum //*restrict
 
 
 /*
