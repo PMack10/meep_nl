@@ -34,9 +34,9 @@ const int MAX_ITERATIONS = 100;
 //};
 
 // Function definitions
-vector<double> equations(double x, double y, double z, const Parameters &p1, const Parameters &p2,
+vector<double> equations(realnum x, realnum y, realnum z, const Parameters &p1, const Parameters &p2,
                          const Parameters &p3);
-vector<vector<double> > jacobian(double x, double y, double z, const Parameters &p1,
+vector<vector<double> > jacobian(realnum x, realnum y, realnum z, const Parameters &p1,
                                  const Parameters &p2, const Parameters &p3);
 vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<double> &F);
 
@@ -173,7 +173,7 @@ void checkType(const T &var) {
 }
 
 
-void runNR(realnum seed1, realnum seed2, realnum seed3, realnum fw, realnum fw_2, realnum fw_3,
+void runNR(realnum seed1, realnum seed2, realnum seed3, RPR fw, RPR fw_2, RPR fw_3,
            const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         

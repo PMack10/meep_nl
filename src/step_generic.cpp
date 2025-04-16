@@ -20,7 +20,7 @@
 #include "config.h"
 #include "newton_raphson.hpp"
 
-#define RPR realnum *restrict
+//#define RPR realnum *restrict
 
 using namespace std;
 
@@ -828,7 +828,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-                    runNR(seed2, seed3, seed1, f[i], fw_3_atZ[i], fw_2_atZ[i], p1, p2,
+            runNR(seed2, seed3, seed1, fw_3_atZ[i], fw_2_atZ[i], f[i], p1, p2,
                   p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
                                        }
 
