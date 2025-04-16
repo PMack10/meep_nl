@@ -632,7 +632,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
             Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
-
+            
             realnum seed1 = fw[i];
             realnum seed2 = fw_2_atZ[i]; //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];

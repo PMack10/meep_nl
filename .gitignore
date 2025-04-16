@@ -157,3 +157,4 @@ python/examples/*.png
 .vs/meep_nl/FileContentIndex/cb34494c-1d28-4db5-9f6a-f15ccdd5c960.vsidx
 .vs/meep_nl/FileContentIndex/a742076c-e024-4d22-afda-849d3336b733.vsidx
 .vs/meep_nl/FileContentIndex/8cd8cb03-2444-4700-a8bf-db40e55b3548.vsidx
+*.vsidx
