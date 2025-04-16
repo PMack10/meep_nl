@@ -87,7 +87,7 @@ int rank3x3(const vector<vector<double> > &M) {
   return 1;
 }
 
-void newtonRaphson(double x, double y, double z, const Parameters &p1,
+void newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
                              const Parameters &p2, const Parameters &p3,  realnum fw,
                              realnum fw_2,
                              realnum fw_3) {
