@@ -819,8 +819,8 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed2 =  f[i];
-            realnum seed1 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed1 =  f[i];
+            realnum seed2 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 =fw_3_atZ[i];
 
                     cout << "PRENR s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << fw << " fw2"
@@ -828,7 +828,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-            runNR(seed2, seed3, seed1, fw_3_atZ[i], fw_2_atZ[i], f[i], p1, p2,
+                    runNR(seed2, seed3, seed1, f[i], fw_3_atZ[i], fw_2_atZ[i], p1, p2,
                   p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
                                        }
 
