@@ -569,7 +569,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
                       const ivec ie, const RPR g, const RPR g1, const RPR g2, const RPR u,
                       const RPR u_2, const RPR u_3, const RPR u1, const RPR u2,
                       ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2,
-                      const RPR chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2,
+                      const realnum* chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2,
                       RPR fw_3,
                       direction dsigw, direction dsigw_2, direction dsigw_3,
                       const RPR sigw, const RPR sigw_2, const RPR sigw_3,
@@ -636,6 +636,7 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum seed1 = fw[i];
             realnum seed2 = fw_2_atZ[i]; //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];
+
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
@@ -823,8 +824,8 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             realnum seed2 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 =fw_3_atZ[i];
 
-                    cout << "PRENR s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << *fw << " fw2"
-                 << *fw_2 << "fw3" << *fw_3 << endl;
+                  cout << "PRENR s1" << seed1 << " fw_2_atZ[i]" << fw_2_atZ[i] << " s3" << seed3 << "chi2"
+                 << chi2new[i] << "us"<< us<< endl;
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.

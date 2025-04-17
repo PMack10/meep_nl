@@ -9,7 +9,7 @@ namespace meep {
 
 // Struct to hold constant parameters for each equation
 struct Parameters {
-  double A, B, C, D, E, F, G, H;
+  realnum A, B, C, D, E, F, G, H;
 };  
 
 
