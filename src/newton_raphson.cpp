@@ -90,9 +90,9 @@ int rank3x3(const vector<vector<double> > &M) {
 }
 
 void newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
-                             const Parameters &p2, const Parameters &p3,  realnum fw,
-                             realnum fw_2,
-                             realnum fw_3) {
+                             const Parameters &p2, const Parameters &p3,  realnum* fw,
+                             realnum* fw_2,
+                             realnum* fw_3) {
   for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
     vector<double> F = equations(x, y, z, p1, p2, p3);
     vector<vector<double> > J = jacobian(x, y, z, p1, p2, p3);
