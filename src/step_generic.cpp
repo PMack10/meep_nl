@@ -820,12 +820,12 @@ void step_update_EDHB(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &
             Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed1 =  f[i];
-            realnum seed2 =fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
-            realnum seed3 =fw_3_atZ[i];
+            realnum seed1 = 23.4;        // f[i];
+            realnum seed2 = 73.4; //fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed3 = 53.4;//fw_3_atZ[i];
 
-                  cout << "PRENR s1" << seed1 << " fw_2_atZ[i]" << fw_2_atZ[i] << " s3" << seed3 << "chi2"
-                 << chi2new[i] << "us"<< us<< endl;
+                  cout << "PRENR s1" << seed1 << " fw_2_atZ[i]" << fw_2_atZ[i] << " s3" << seed3 << " chi2"
+                 << chi2new[i] << " us" << us << " us_2" << us_2 << " us_3"<< us_3<< endl;
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
