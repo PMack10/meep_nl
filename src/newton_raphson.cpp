@@ -115,9 +115,9 @@ void newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
     if (fabs(delta[0]) < TOLERANCE && fabs(delta[1]) < TOLERANCE && fabs(delta[2]) < TOLERANCE) {
    //   cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
    //   cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
-      fw = x; /// Update E field values!
-   fw_2 = y;
-      fw_3 = z;
+      *fw = x; /// Update E field values!
+   *fw_2 = y;
+      *fw_3 = z;
       return;
     }
   }
