@@ -171,7 +171,7 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
 }
 
 
-void runNR(realnum seed1, realnum seed2, realnum seed3, realnum fw, realnum fw_2, realnum fw_3, const Parameters &p1, const Parameters &p2,
+void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw_2, realnum* fw_3, const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
   //  cout << "Doing NR" << endl;
