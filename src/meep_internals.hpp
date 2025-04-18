@@ -136,7 +136,14 @@ void step_curl_stride1(realnum *f, component c, const realnum *g1, const realnum
                        const realnum *kapu, const realnum *siginvu, realnum dt, const realnum *cnd,
                        const realnum *cndinv, realnum *fcnd);
 
-void step_update_EDHB_stride1(realnum *f, realnum *f_2, realnum *f_3, component fc,
+void step_update_EDHB_stride1(realnum *f, component fc, const grid_volume &gv, const ivec is,
+                              const ivec ie, const realnum *g, const realnum *g1, const realnum *g2,
+                              const realnum *u, const realnum *u1, const realnum *u2, ptrdiff_t s,
+                              ptrdiff_t s1, ptrdiff_t s2, const realnum *chi2, const realnum *chi3,
+                              realnum *fw, direction dsigw, const realnum *sigw,
+                              const realnum *kapw);
+
+void step_update_EDHB_NL_stride1(realnum *f, realnum *f_2, realnum *f_3, component fc,
                               const grid_volume &gv, const ivec is, const ivec is_2,
                               const ivec is_3, const ivec ie, const realnum *g, const realnum *g1,
                               const realnum *g2, const realnum *u, const realnum *u_2,
