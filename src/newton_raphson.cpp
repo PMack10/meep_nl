@@ -28,7 +28,7 @@ namespace meep {
 
 
 const double TOLERANCE = 1e-14;
-const int MAX_ITERATIONS = 100;
+const int MAX_ITERATIONS = 50;
 
 //// Struct to hold constant parameters for each equation
 //struct Parameters { // moved to .hpp??!
@@ -181,8 +181,8 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       int rankM = rank3x3(M);
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
-        cout << " s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << *fw << " fw2" << *fw_2<< "fw3" << *fw_3 << endl;
-        cout << " p1A" << p1.A << " p1B" << p1.B << " p1F" << p1.F << endl;
+      //  cout << " s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << *fw << " fw2" << *fw_2<< "fw3" << *fw_3 << endl;
+      //  cout << " p1A" << p1.A << " p1B" << p1.B << " p1F" << p1.F << endl;
            
       return;
       }
