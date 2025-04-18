@@ -94,7 +94,17 @@ void step_curl(realnum *f, component c, const realnum *g1, const realnum *g2, pt
                direction dsigu, const realnum *sigu, const realnum *kapu, const realnum *siginvu,
                realnum dt, const realnum *cnd, const realnum *cndinv, realnum *fcnd);
 
-void step_update_EDHB(realnum *f, realnum *f_2, realnum *f_3,  component fc, const grid_volume &gv, 
+
+void step_update_EDHB(realnum *f, component fc, const grid_volume &gv, const ivec is, const ivec ie,
+                      const realnum *g, const realnum *g1, const realnum *g2, const realnum *u,
+                      const realnum *u1, const realnum *u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2,
+                      const realnum *chi2, const realnum *chi3, realnum *fw, direction dsigw,
+                      const realnum *sigw, const realnum *kapw);
+
+
+
+void step_update_EDHB_NL(realnum *f, realnum *f_2, realnum *f_3, component fc,
+                         const grid_volume &gv, 
     const ivec is, const ivec is_2, const ivec is_3, const ivec ie,
                       const realnum *g, const realnum *g1, const realnum *g2, const realnum *u,
                       const realnum *u_2, const realnum *u_3, const realnum *u1, const realnum *u2, 
@@ -166,15 +176,31 @@ void step_bfast_stride1(realnum *f, component c, const realnum *g1, const realnu
                 kapu, siginvu, dt, cnd, cndinv, fcnd);                                             \
   } while (0)
 
+
+#define STEP_UPDATE_EDHB(f, fc, gv, is, ie, g, g1, g2, u, u1, u2, s, s1, s2, chi2, chi3, fw,       \
+                         dsigw, sigw, kapw)                                                        \
+  do {                                                                                             \
+    if (LOOPS_ARE_STRIDE1(gv))                                                                     \
+      step_update_EDHB_stride1(f, fc, gv, is, ie, g, g1, g2, u, u1, u2, s, s1, s2, chi2, chi3, fw, \
+                               dsigw, sigw, kapw);                                                 \
+    else                                                                                           \
+      step_update_EDHB(f, fc, gv, is, ie, g, g1, g2, u, u1, u2, s, s1, s2, chi2, chi3, fw, dsigw,  \
+                       sigw, kapw);                                                                \
+  } while (0)
+
+
+
+
 // TODO don't think if(LOOPS_ARE_STRIDE1(gv)) returns as true as can't see stride1 vn defined anywhere - confirm
-#define STEP_UPDATE_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3,       \
+#define STEP_UPDATE_EDHB_NL(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3,       \
                          dsigw, dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3)                                                        \
   do {                                                                                             \
     if (LOOPS_ARE_STRIDE1(gv))                                                                     \ 
-      step_update_EDHB_stride1(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
+      step_update_EDHB_NL_stride1(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
                        dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
     else                                                                                           \
-      step_update_EDHB(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s, s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
+      step_update_EDHB_NL(f, f2, f3, fc, gv, is, is2, is3, ie, g, g1, g2, u, u_2, u_3, u1, u2, s,  \
+                          s1, s2, chi2, chi3, fw, fTemp2, fTemp3, fw2, fw3, dsigw,  \
                        dsigw2, dsigw3, sigw, sigw2, sigw3, kapw, kapw2, kapw3);                                                                \
   } while (0)
 

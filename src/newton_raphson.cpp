@@ -27,7 +27,7 @@ namespace meep {
 
 
 
-const double TOLERANCE = 1e-14;
+const double TOLERANCE = 1e-9;
 const int MAX_ITERATIONS = 50;
 
 //// Struct to hold constant parameters for each equation
