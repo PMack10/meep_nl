@@ -585,7 +585,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     SWAP(const RPR, u1, u2);
     SWAP(ptrdiff_t, s1, s2);
   }
-  cout << "in linear loop  " << i << endl;
+  cout << "in linear loop  "  << endl;
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
   (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
