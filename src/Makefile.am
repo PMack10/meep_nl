@@ -17,7 +17,7 @@ initialize.cpp integrate.cpp integrate2.cpp material_data.cpp monitor.cpp mympi.
 multilevel-atom.cpp near2far.cpp output_directory.cpp random.cpp 	\
 sources.cpp step.cpp step_db.cpp stress.cpp structure.cpp structure_dump.cpp		\
 susceptibility.cpp time.cpp update_eh.cpp mpb.cpp update_pols.cpp 	\
-vec.cpp step_generic.cpp step_generic_stride1.cpp meepgeom.cpp GDSIIgeom.cpp newton_raphson.cpp $(HDRS) $(BUILT_SOURCES)
+vec.cpp step_generic.cpp meepgeom.cpp GDSIIgeom.cpp newton_raphson.cpp $(HDRS) $(BUILT_SOURCES)
 
 SUBDIRS = support
 libmeep_la_LIBADD = support/libsupport.la
