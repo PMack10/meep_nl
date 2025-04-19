@@ -790,10 +790,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                    calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
           }
         }
-        else if (g2) { 
-        cout << "ykdrs " << endl;
-            
-            meep::abort("bug - didn't swap off-diagonal terms!?"); }
+        else if (g2) {
+          cout << "ykdrs " << endl;
+
+          meep::abort("bug - didn't swap off-diagonal terms!?");
+        }
         cout << "lydtser " << endl;
 
         else {
@@ -809,7 +810,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       else if (u) {
         cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-          cout << u[i] << "  "<< g[i] << endl;
+          cout << u[i] << "  " << g[i] << endl;
 
           realnum gs = g[i];
           realnum us = u[i];
@@ -817,10 +818,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-        cout << "jktydtrew " << endl;
-
-        PLOOP_OVER_IVECS(gv, is, ie, i) { f[i] = g[i]; }
+        PLOOP_OVER_IVECS(gv, is, ie, i);
+        {
+        f[i] = g[i];
       }
+    }
     }
   }
 }
