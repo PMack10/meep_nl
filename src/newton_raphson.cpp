@@ -218,6 +218,10 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           counter = true;
         }
       }
+      if (counter) {
+        cout << "FALSE "  << endl;
+        sleep(19);
+      }
   }
 
 }
