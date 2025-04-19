@@ -819,7 +819,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-        PLOOP_OVER_IVECS(gv, is, ie, i);
+        PLOOP_OVER_IVECS(gv, is, ie, i)
         {
         f[i] = g[i];
       }
