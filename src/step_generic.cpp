@@ -1013,7 +1013,6 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                   cout << " us " << us << endl;
             cout << " us_2 " << us_2 << endl;
                   cout << " us_3 " << us_3 << endl;
-            cout << " u1 " << u1[i] << endl;
                   cout << " gs_2" << gs_2 << endl;
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
