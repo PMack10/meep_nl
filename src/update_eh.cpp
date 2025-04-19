@@ -223,7 +223,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             memcpy(f_w_prev[ec][cmp], f_w[ec][cmp] ? f_w[ec][cmp] : f[ec][cmp],
                    sizeof(realnum) * gv.ntot());
           }
-          cout << "Doing linear pre step call" << ft << "  " << ec << "  "<< i<<  endl;
+      ///    cout << "Doing linear pre step call" << ft << "  " << ec << "  "<< i<<  endl;
 
           /// if (!s->chi3[ec] || ft == H_stuff ) { /// Add this 'if not chi3' (hack, using chi3 as
           /// a flag, actual value not relevant so long as it is non-zero for the 2nd order NL
@@ -234,7 +234,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           /// NR loop...
 
           if (f[ec][cmp] != f[dc][cmp]) {
-            cout << "Doing linear pre step call 2"  << endl;
+         ///   cout << "Doing linear pre step call 2"  << endl;
             STEP_UPDATE_EDHB(
                 f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
                 gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
@@ -257,15 +257,15 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             //}
           }
         }
-        cout << "Done linear" << ft << endl;
+      //  cout << "Done linear" << ft << endl;
       } /// The FOR_FT_COMPONENTS loop should close out on ec = Ez, therefore for convenience, start
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
-        cout << "Done linear 2 " <<  endl;  
-      cout << "Done linear 2b " << typeid(s->chi2[ez]).name() << endl; // Pd
-        cout << "Done linear 2b " << typeid(s->chi2[ez][0]).name() << endl; // 
-      cout << "Done linear 2c "  << ecInLoop << endl;   // 4
+      //  cout << "Done linear 2 " <<  endl;  
+      //cout << "Done linear 2b " << typeid(s->chi2[ez]).name() << endl; // Pd
+      //  cout << "Done linear 2b " << typeid(s->chi2[ez][0]).name() << endl; // 
+      //cout << "Done linear 2c "  << ecInLoop << endl;   // 4
 
 
       /// START OF NL VERSION OF STEP_UPDATE_EDHB>>>>>>>>> This is outside the FOR_FT_COMPONENTS
@@ -273,11 +273,11 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
       /// TODO this bit is only for the PML case [is it??], need another one where it's not pml
       /// case..? handle the NL chunks and pass in all xyz field components in at once.
       if (s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes)
-          cout << "Doing Nonlinear 1: " << ft << "  " << s->chi2[ez]
-               << "  " << ecInLoop << endl; /// of chi3... TODO check s->chi3[ec] 
+      //    cout << "Doing Nonlinear 1: " << ft << "  " << s->chi2[ez]
+        //       << "  " << ecInLoop << endl; /// of chi3... TODO check s->chi3[ec] 
 
         if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
-          cout << "Doing Nonlinear 2" << endl;
+      //    cout << "Doing Nonlinear 2" << endl;
           // TODO CURRENTLY GETTING STUCK SOMEWHERE AFTER THIS POINT!
             //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
             //  std::cout << "ec != ez!! ec:" << ec
@@ -301,7 +301,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             direction dsigw0_3 = d_2; /// Y
             direction dsigw_3 = s->sigsize[dsigw0] > 1 ? dsigw0_3 : NO_DIRECTION;
 
-            cout << "after defs " << endl;
+          //  cout << "after defs " << endl;
             /// Now do nonlinear xyz e field step update:  /// TODO! need to ensure correct 'ec'
             /// components go into all these (i.e, z, x, y)
        //  if (f[ecInLoop][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
@@ -323,11 +323,11 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
               s->sig[dsigw], s->sig[dsigw_2], s->sig[dsigw_3],
               s->kap[dsigw], s->kap[dsigw_2], s->kap[dsigw_3]);
 
-          cout << "after nl loop call " << endl;
+     ///     cout << "after nl loop call " << endl;
           //}
         }
       } /// end of new NL stuff
-      cout << "next DOCMP" << endl;
+   ///   cout << "next DOCMP" << endl;
     } /// added } here to split the two loop macros
   }
 

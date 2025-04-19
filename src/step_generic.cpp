@@ -585,7 +585,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     SWAP(const RPR, u1, u2);
     SWAP(ptrdiff_t, s1, s2);
   }
-  cout << "in linear loop  "  << endl;
+///cout << "in linear loop  "  << endl;
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
   (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
@@ -594,7 +594,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
      of the "MOST GENERAL CASE" loop with various terms thrown out. */
 
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
-    cout << "in linear loop PML" << endl;
+  ///cout << "in linear loop PML" << endl;
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
       if (chi3) {
@@ -711,7 +711,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-    cout << "in linear loop Non pml" << endl;
+  ///cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
       ///cout << "at chi3" << endl;
@@ -833,10 +833,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &gv, const ivec is, const ivec is_2, const ivec is_3, const ivec ie, const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u_2, const RPR u_3, const RPR u1, const RPR u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2, const realnum* chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2, RPR fw_3, direction dsigw, direction dsigw_2, direction dsigw_3, const RPR sigw, const RPR sigw_2, const RPR sigw_3, const RPR kapw, const RPR kapw_2, const RPR kapw_3) {
   (void)fc; // currently unused
   if (!f) {
-    cout << "returning for bad reasons" << endl;
+  ///cout << "returning for bad reasons" << endl;
       return; }
 
-    cout << "NL ..wafewfaef" << endl;
+  ///cout << "NL ..wafewfaef" << endl;
 
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
@@ -847,7 +847,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                                ///some chunks won't have pml even if some do.
     KSTRIDE_DEF(dsigw, kw, is, gv); /// Used in DEF_kw.  dsigw, is, and gv come from fn. kw0,
                                     /// skw1/2/3 out. TODO check wrt position
-    cout << "in Pml NL case 1 " << endl;
+  ///cout << "in Pml NL case 1 " << endl;
     // TODO implement off-diagonal epsilon terms into NewtonRaphson solver
   ///  if (chi3) { 
       /// Build NR solver into this section here. **should add similar copy to the section further
@@ -883,7 +883,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       PLOOP_OVER_IVECS(gv, is, ie, i) {
 
           if (chi2new[i] == 0.0) { 
-              cout << "Continuing" << endl;
+            ///cout << "Continuing" << endl;
               continue; 
           }
         realnum gs = g[i]; // dmpZ
@@ -909,13 +909,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                          // SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
         realnum seed3 = fw_3_atZ[i];
 
-    cout << "in Pml NL case 1 at NR " << endl;
+  ///cout << "in Pml NL case 1 at NR " << endl;
 
         /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
         ///  Seeded with previous field vals. Passing in field array pointers to be assigned new
         ///  vals.
         runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &fw[i], p1, p2, p3);
-    cout << "in Pml NL case 1 done NR" << endl;
+  ///cout << "in Pml NL case 1 done NR" << endl;
 
         // Do the other fields for PML (whatever they do exactly..)
         DEF_kw; /// TODO  - might not be relevant because its for PML and PML won't use this
@@ -966,7 +966,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
   }
  
   else {            /////////////// no PML (no fw) ///////////////////
-    cout << "in NONPml NL case 1 " << endl;
+  ///cout << "in NONPml NL case 1 " << endl;
     
     ///  if (chi3) { /// // TODO delete if
         
@@ -981,7 +981,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         PLOOP_OVER_IVECS(gv, is, ie, i) {
 
                     if (chi2new[i] == 0.0) { continue; }// 
-    cout << "inrtshtj " << endl;
+  ///cout << "inrtshtj " << endl;
     
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
@@ -992,7 +992,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum us = 1 / u[i]; 
             realnum us_2 = 1 / u_2[i]; 
             realnum us_3 = 1 / u_3[i];
-            cout << "lgsfdg " << endl;
+          ///cout << "lgsfdg " << endl;
 
             // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
             Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
@@ -1002,9 +1002,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum seed1 =  f[i];
             realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];
-            cout << "ykskrsts " << endl;
 
-                  cout << "PRENR s1" << endl;
+       /*           cout << "PRENR s1" << endl;
             cout << seed1 << endl;
                   cout << " fw_2_atZ[i]" << fw_2_atZ[i] << endl;
             cout << " s3" << seed3 << endl;
@@ -1013,7 +1012,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                   cout << " us " << us << endl;
             cout << " us_2 " << us_2 << endl;
                   cout << " us_3 " << us_3 << endl;
-                  cout << " gs_2" << gs_2 << endl;
+                  cout << " gs_2" << gs_2 << endl;*/
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
