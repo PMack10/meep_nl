@@ -234,6 +234,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           /// NR loop...
 
           if (f[ec][cmp] != f[dc][cmp]) {
+            cout << "Doing linear pre step call 2" << << endl;
             STEP_UPDATE_EDHB(
                 f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
                 gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],

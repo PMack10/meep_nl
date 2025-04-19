@@ -585,7 +585,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     SWAP(const RPR, u1, u2);
     SWAP(ptrdiff_t, s1, s2);
   }
-
+  cout << "in linear loop  " << i << endl;
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
   (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
@@ -594,6 +594,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
      of the "MOST GENERAL CASE" loop with various terms thrown out. */
 
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
+    cout << "in linear loop PML" << endl;
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
       if (chi3) {
@@ -710,6 +711,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
+    cout << "in linear loop Non pml" << endl;
+
     if (u1 && u2) { // 3x3 off-diagonal u
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
