@@ -213,7 +213,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
           cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
           sleep(1);
-          counter true;
+          counter = true;
         }
       }
   }
