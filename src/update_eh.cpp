@@ -240,8 +240,8 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
                 gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
                 s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
                 dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2,
-                NULL, /// CHI2 set to NULL here as will be applied in subsequent STEP_UPDATE_EDHB_NL
-                s->chi3[ec], f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+                NULL,NULL, /// CHI2 and chi3 set to NULL here as will be applied in subsequent STEP_UPDATE_EDHB_NL. s->chi2[ec], s->chi3[ec], 
+                f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
 
             // if (gv.dim == Dcyl) {
             //  ivec is = gvs_eh[ft][i].little_owned_corner(ec);
