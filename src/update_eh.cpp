@@ -260,9 +260,10 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
-        cout << "Done linear 2 " <<  endl;
-      cout << "Done linear 2b " << typeid(s->chi2[ez]).name() << endl;
-      cout << "Done linear 2c "  << ecInLoop << endl;
+        cout << "Done linear 2 " <<  endl;  
+      cout << "Done linear 2b " << typeid(s->chi2[ez]).name() << endl; // Pd
+        cout << "Done linear 2b " << typeid(s->chi2[ez][0]).name() << endl; // 
+      cout << "Done linear 2c "  << ecInLoop << endl;   // 4
 
 
       /// START OF NL VERSION OF STEP_UPDATE_EDHB>>>>>>>>> This is outside the FOR_FT_COMPONENTS
@@ -270,7 +271,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
       /// TODO this bit is only for the PML case [is it??], need another one where it's not pml
       /// case..? handle the NL chunks and pass in all xyz field components in at once.
       if (s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes)
-          cout << "Doing Nonlinear 1: " << ft << "  " << s->chi2[ez][i]
+          cout << "Doing Nonlinear 1: " << ft << "  " << s->chi2[ez]
                << "  " << ecInLoop << endl; /// of chi3... TODO check s->chi3[ec] 
 
         if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS

@@ -845,7 +845,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
       PLOOP_OVER_IVECS(gv, is, ie, i) {
 
-          if (chi2new[i] == 0) { 
+          if (chi2new[i] == 0.0) { 
               cout << "Continuing" << endl;
               continue; 
           }
@@ -891,7 +891,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       KSTRIDE_DEF(dsigw_2, kw_2, is_2, gv);
       PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
 
-        if (chi2new[i] == 0) { continue; }// TODO should this be in these two interpolation loops??
+        if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
         DEF_kw_2; // these will throw if the necessary values are null, but they shouldn't be
                   // because this ploop should only run if we're doing chi3 flagged NL stuff
@@ -907,7 +907,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       KSTRIDE_DEF(dsigw_3, kw_3, is_3, gv);
       PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
 
-                  if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+                  if (chi2new[i] == 0.0) { continue; } // TODO should this be in these two interpolation loops??
 
         DEF_kw_3;
         realnum fwprev_3 = fw_3[i];
@@ -939,7 +939,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
         PLOOP_OVER_IVECS(gv, is, ie, i) {
 
-                    if (chi2new[i] == 0) { continue; }// 
+                    if (chi2new[i] == 0.0) { continue; }// 
 
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
@@ -972,7 +972,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
         PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
 
-                                if (chi2new[i] == 0) { continue; }// TODO should this be in these two interpolation loops??
+                                if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
              //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
                         f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here.
@@ -980,7 +980,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
         PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
 
-                                if (chi2new[i] == 0) { continue; }// TODO should this be in these two interpolation loops??
+                                if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
                      f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)])*0.25; // interpolation here
@@ -1066,7 +1066,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //
 //    PLOOP_OVER_IVECS(gv, is, ie, i) {
 //
-//      if (chi2new[i] == 0) { continue; }
+//      if (chi2new[i] == 0.0) { continue; }
 //      realnum gs = g[i]; // dmpZ
 //      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
 //      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX
@@ -1109,7 +1109,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //    KSTRIDE_DEF(dsigw_2, kw_2, is_2, gv);
 //    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
 //
-//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//      if (chi2new[i] == 0.0) { continue; } // TODO should this be in these two interpolation loops??
 //
 //      DEF_kw_2; // these will throw if the necessary values are null, but they shouldn't be
 //                // because this ploop should only run if we're doing chi3 flagged NL stuff
@@ -1125,7 +1125,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //    KSTRIDE_DEF(dsigw_3, kw_3, is_3, gv);
 //    PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
 //
-//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//      if (chi2new[i] == 0.0) { continue; } // TODO should this be in these two interpolation loops??
 //
 //      DEF_kw_3;
 //      realnum fwprev_3 = fw_3[i];
@@ -1161,7 +1161,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //
 //    PLOOP_OVER_IVECS(gv, is, ie, i) {
 //
-//      if (chi2new[i] == 0) { continue; } //
+//      if (chi2new[i] == 0.0) { continue; } //
 //
 //      realnum gs = g[i]; // dmpZ
 //      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
@@ -1200,7 +1200,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //    // then calculate f_2 and f_3..
 //    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
 //
-//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//      if (chi2new[i] == 0.0) { continue; } // TODO should this be in these two interpolation loops??
 //
 //      //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
 //      f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
@@ -1209,7 +1209,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //
 //    PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
 //
-//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//      if (chi2new[i] == 0.0) { continue; } // TODO should this be in these two interpolation loops??
 //
 //      //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
 //      f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]) *
