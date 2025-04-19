@@ -197,10 +197,12 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p1 = {a, 3.2, 0, 0, 0, 0.000002, 0, 0}; // p1.A is the D-P field p1.B is epsilon, then chi2
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
-  
+      bool counter = false;
       for (int i = 0, imax = 4297458100; i < imax; i*=i) {
        // if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3)) {
         if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
+         if (counter) { cout << "True " << i << endl; }
+          counter = false;  
           break;
         }
         else {
@@ -211,6 +213,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
           cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
           sleep(1);
+          counter true;
         }
       }
   }
