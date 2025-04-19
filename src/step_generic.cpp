@@ -19,6 +19,7 @@
 #include "meep_internals.hpp"
 #include "config.h"
 #include "newton_raphson.hpp"
+#include <iostream>
 
 #define RPR realnum *restrict
 
