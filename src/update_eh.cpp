@@ -255,12 +255,12 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             //}
           }
         }
-        cout << "Done linear" << endl;
+        cout << "Done linear" << ft << endl;
       } /// The FOR_FT_COMPONENTS loop should close out on ec = Ez, therefore for convenience, start
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
-        cout << "Done linear 2 " << ft <<  endl;
+        cout << "Done linear 2 " <<  endl;
       cout << "Done linear 2b "  << s->chi2[ez][0] << endl;
       cout << "Done linear 2c "  << ecInLoop << endl;
 
