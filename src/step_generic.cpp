@@ -832,9 +832,12 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 /// TODO rename macro and fn defs for this
 void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &gv, const ivec is, const ivec is_2, const ivec is_3, const ivec ie, const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u_2, const RPR u_3, const RPR u1, const RPR u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2, const realnum* chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ, RPR fw_3_atZ, RPR fw_2, RPR fw_3, direction dsigw, direction dsigw_2, direction dsigw_3, const RPR sigw, const RPR sigw_2, const RPR sigw_3, const RPR kapw, const RPR kapw_2, const RPR kapw_3) {
   (void)fc; // currently unused
-  if (!f) return;
+  if (!f) {
+    cout << "returning for bad reasons" << endl;
+      return; }
 
-  
+    cout << "NL ..wafewfaef" << endl;
+
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
   (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
