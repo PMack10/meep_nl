@@ -278,6 +278,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
         if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
           cout << "Doing Nonlinear 2" << endl;
+          // TODO CURRENTLY GETTING STUCK SOMEWHERE AFTER THIS POINT!
             //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
             //  std::cout << "ec != ez!! ec:" << ec
             //            << std::endl; /// TODO, ec might not print as a variable I suppose...
@@ -300,6 +301,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             direction dsigw0_3 = d_2; /// Y
             direction dsigw_3 = s->sigsize[dsigw0] > 1 ? dsigw0_3 : NO_DIRECTION;
 
+            cout << "after defs " << endl;
             /// Now do nonlinear xyz e field step update:  /// TODO! need to ensure correct 'ec'
             /// components go into all these (i.e, z, x, y)
        //  if (f[ecInLoop][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
@@ -321,6 +323,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
               s->sig[dsigw], s->sig[dsigw_2], s->sig[dsigw_3],
               s->kap[dsigw], s->kap[dsigw_2], s->kap[dsigw_3]);
 
+          cout << "after nl loop call " << endl;
           //}
         }
       } /// end of new NL stuff

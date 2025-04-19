@@ -714,7 +714,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
-      cout << "at chi3" << endl;
+      ///cout << "at chi3" << endl;
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -729,7 +729,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       
 
       else {
-        cout << "at chi3 else" << endl;
+        ///cout << "at chi3 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -738,7 +738,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      cout << "at chi3 u1" << endl;
+      ///cout << "at chi3 u1" << endl;
 
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -752,7 +752,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       
 
       else {
-        cout << "at chi3 u1 else" << endl;
+        ///cout << "at chi3 u1 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -761,15 +761,15 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u2) { // 2x2 off-diagonal u
-      cout << "abrte" << endl;
+      ///cout << "abrte" << endl;
 
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      cout << "at chi3 diag " << endl;
+      ///cout << "at chi3 diag " << endl;
 
       if (chi3) {
-        cout << "rzjrejz " << endl;
+        ///cout << "rzjrejz " << endl;
 
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -782,7 +782,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-          cout << "ahrewjr " << endl;
+          ///cout << "ahrewjr " << endl;
 
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -793,13 +793,13 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g2) {
-          cout << "ykdrs " << endl;
+          ///cout << "ykdrs " << endl;
 
           meep::abort("bug - didn't swap off-diagonal terms!?");
         }
 
         else {
-        cout << "lydtser " << endl;
+        ///cout << "lydtser " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
@@ -809,9 +809,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
 
       else if (u) {
-        cout << "most basic case  " << endl;
+        ///cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-       //   cout << u[i] << "  " << g[i] << endl;
+       //   ///cout << u[i] << "  " << g[i] << endl;
 
           realnum gs = g[i];
           realnum us = u[i];
@@ -844,7 +844,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                                ///some chunks won't have pml even if some do.
     KSTRIDE_DEF(dsigw, kw, is, gv); /// Used in DEF_kw.  dsigw, is, and gv come from fn. kw0,
                                     /// skw1/2/3 out. TODO check wrt position
-
+    cout << "in Pml NL case 1 " << endl;
     // TODO implement off-diagonal epsilon terms into NewtonRaphson solver
   ///  if (chi3) { 
       /// Build NR solver into this section here. **should add similar copy to the section further
@@ -906,10 +906,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                          // SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
         realnum seed3 = fw_3_atZ[i];
 
+    cout << "in Pml NL case 1 at NR " << endl;
+
         /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
         ///  Seeded with previous field vals. Passing in field array pointers to be assigned new
         ///  vals.
         runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &fw[i], p1, p2, p3);
+    cout << "in Pml NL case 1 done NR" << endl;
 
         // Do the other fields for PML (whatever they do exactly..)
         DEF_kw; /// TODO  - might not be relevant because its for PML and PML won't use this
