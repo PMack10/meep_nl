@@ -14,7 +14,7 @@
 %  along with this program; if not, write to the Free Software Foundation,
 %  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <iostream>
+
 #include "meep.hpp"
 #include "meep_internals.hpp"
 #include "config.h"
@@ -994,3 +994,218 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 }
 
 } // namespace meep
+
+
+
+
+///// TODO rename macro and fn defs for this
+//void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volume &gv,
+//                         const ivec is, const ivec is_2, const ivec is_3, const ivec ie,
+//                         const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u_2,
+//                         const RPR u_3, const RPR u1, const RPR u2, ptrdiff_t s, ptrdiff_t s1,
+//                         ptrdiff_t s2, const realnum *chi2new, const RPR chi3, RPR fw, RPR fw_2_atZ,
+//                         RPR fw_3_atZ, RPR fw_2, RPR fw_3, direction dsigw, direction dsigw_2,
+//                         direction dsigw_3, const RPR sigw, const RPR sigw_2, const RPR sigw_3,
+//                         const RPR kapw, const RPR kapw_2, const RPR kapw_3) {
+//  (void)fc; // currently unused
+//  if (!f) return;
+//
+//// stable averaging of offdiagonal components
+//#define OFFDIAG(u, g, sx)                                                                          \
+//  (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
+//
+//  if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////  // TODO need to also
+//                               /// implement for non pml case, since this fn operates chunk-wise,
+//                               /// and some chunks won't have pml even if some do.
+//    KSTRIDE_DEF(dsigw, kw, is, gv); /// Used in DEF_kw.  dsigw, is, and gv come from fn. kw0,
+//                                    /// skw1/2/3 out. TODO check wrt position
+//
+//    // TODO implement off-diagonal epsilon terms into NewtonRaphson solver
+//    ///  if (chi3) {
+//    /// Build NR solver into this section here. **should add similar copy to the section further
+//    /// down without PML... Will be callable by defining the 2nd order NL material with a full 3x3
+//    /// offdiagonal epsilon as a flag (i.e. u1 && u2 must be non-zero, however they will NOT be
+//    /// used in the calc) and also setting chi3 as nonzero as a flag (chi3 will not be used, but
+//    /// setting it to non-zero is a hack to make the code enter this 'if' statement for the NL
+//    /// material
+//    ///
+//    /// f, f_2 and f_3 (i.e, Z, X, and Y respectively) are (in non-PML case) i-th cell electric
+//    /// field the output from this fn. In PML case they are updated as per original meep (but not
+//    /// clear what exactly the fields represent in this case)... fc = field cmpnt gv = grid volume
+//    /// (need to ploopoverivecs) is, ie, start and end of chunk. is, is_2, is_3 are start ivecs
+//    /// for Z, X, and Y directions respectively g, g1, g2 = 'D - P'  field components z, x, y u is
+//    /// inverse epsilon Z direction. u1, u2 = offdiagonal inverse epsilon(NOT used - except as
+//    /// flag). u_2 and u_3 are inverse epsilon in the X and Y directions s, s1, s2 = strides (for
+//    /// getting avged orthogonal fields over adjacent cells (see yeecell diag it makes sense). For
+//    /// this NL fn, these will have been set in the most recent 'FOR_FT_COMPONENTS' loop, in which
+//    /// 'ec' would have been Ez, therefore s is Ez stride, s1 and s2 are x and y respectively...
+//    /// TODO - DOUBLE CHECK THIS IS TRUE from update_eh! chi2 = actual simulation value of chi2
+//    /// (in meep units..?), will be passed into NR chi3 = a flag (set to nonzero float to indicate
+//    /// NL material) fw[i] = PML case: i-th cell Ez field the output from this fn. fw_2_atZ and
+//    /// fw_3_atZ are X and Y E fields AT Z LOCATIONS (see below). fw_2/3 are for the final
+//    /// interpolated Ex and Ey fields. dsigw =           /// sigw =           /// kapw =
+//
+//    ///  fw_2_atZ and fw_3_atZ need to have the same dim as fw. If fw[i] is i'th Ex field, fw_2/3
+//    ///  are the Ex and Ey fields at the SAME location as the Ez field. According
+//    /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each
+//    /// other. The Ex and Ey fields at the correct yee cell locations must therefore subsequently
+//    /// calculated by interpolation (same principle as for gs_2 below), in subsequent
+//    /// ploopoverivecs
+//
+//    PLOOP_OVER_IVECS(gv, is, ie, i) {
+//
+//      if (chi2new[i] == 0) { continue; }
+//      realnum gs = g[i]; // dmpZ
+//      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
+//      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX
+//      realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY
+//
+//      /// taking inverse of chi1inverse is easiest way to access epsilon...
+//      realnum us = 1 / u[i];
+//      realnum us_2 = 1 / u_2[i];
+//      realnum us_3 = 1 / u_3[i];
+//
+//      /// #will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2, 0, 0 } etc;
+//      Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
+//      Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+//      Parameters p3 = {gs,  us,  0.0, 0.0,
+//                       0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components
+//                                                   // equal (as zinc blende)
+//
+//      realnum seed1 = fw[i];
+//      realnum seed2 =
+//          fw_2_atZ[i]; // TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED
+//                       // SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+//      realnum seed3 = fw_3_atZ[i];
+//
+//      /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
+//      ///  Seeded with previous field vals. Passing in field array pointers to be assigned new
+//      ///  vals.
+//      runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &fw[i], p1, p2, p3);
+//
+//      // Do the other fields for PML (whatever they do exactly..)
+//      DEF_kw; /// TODO  - might not be relevant because its for PML and PML won't use this
+//              /// implementation so long as we don't have a chi3(flag) defined within a PML
+//              /// layer?!
+//      /// uses kw0, skw1/2/3. not sure what it does exactly...
+//      realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw]; // Ez
+//      f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
+//    }
+//
+//    // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions,
+//    // and then calculate f_2 and f_3..
+//    KSTRIDE_DEF(dsigw_2, kw_2, is_2, gv);
+//    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
+//
+//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//
+//      DEF_kw_2; // these will throw if the necessary values are null, but they shouldn't be
+//                // because this ploop should only run if we're doing chi3 flagged NL stuff
+//      realnum fwprev_2 = fw_2[i];
+//      realnum kapwkw_2 = kapw_2[kw_2], sigwkw_2 = sigw_2[kw_2];
+//
+//      fw_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
+//                0.25; // interpolation here.
+//      //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
+//      f_2[i] += (kapwkw_2 + sigwkw_2) * fw_2[i] - (kapwkw_2 - sigwkw_2) * fwprev_2; // update f_2
+//    }
+//
+//    KSTRIDE_DEF(dsigw_3, kw_3, is_3, gv);
+//    PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
+//
+//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//
+//      DEF_kw_3;
+//      realnum fwprev_3 = fw_3[i];
+//      realnum kapwkw_3 = kapw_3[kw_3], sigwkw_3 = sigw_3[kw_3];
+//
+//      fw_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]) *
+//                0.25; // interpolation here
+//                      //(Gets 'Ey fields at Y cell locations' from 'Ey fields at Z cell locations')
+//      f_3[i] += (kapwkw_3 + sigwkw_3) * fw_3[i] - (kapwkw_3 - sigwkw_3) * fwprev_3;
+//    }
+//
+//    //                                   z            x            z     x
+//    // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+//    ///  }
+//  }
+//
+//  else { /////////////// no PML (no fw) ///////////////////
+//
+//    ///  if (chi3) { /// // TODO delete if
+//
+//    /// NR Solver. Similar (simplified as no separate fw and f field updates) to the version above
+//    /// for the PML case(which probably won't be used but who knows))... Again, callable by defining
+//    /// the 2nd order NL material with a full 3x3 offdiagonal epsilon as a flag (i.e. u1 && u2 must
+//    /// be non-zero, however they will NOT be used in the calc) and also setting chi3 as nonzero as
+//    /// a flag (chi3 will not be used, but setting it to non-zero is a hack to make the code enter
+//    /// this 'if' statement for the NL material
+//
+//    ///  fw_2_atZ and fw_3_atZ need to have the same dim as f. If f[i] is i'th Ex field, f_2/3 are
+//    ///  the Ex and Ey fields at the SAME location as the Ez field. According
+//    /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each
+//    /// other. The Ex and Ey fields at the correct yee cell locations must therefore subsequently
+//    /// calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
+//
+//    PLOOP_OVER_IVECS(gv, is, ie, i) {
+//
+//      if (chi2new[i] == 0) { continue; } //
+//
+//      realnum gs = g[i]; // dmpZ
+//      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
+//      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX
+//      realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY
+//
+//      /// taking inverse of chi1inverse is easiest way to access epsilon...
+//      realnum us = 1 / u[i];
+//      realnum us_2 = 1 / u_2[i];
+//      realnum us_3 = 1 / u_3[i];
+//
+//      // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
+//      Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
+//      Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+//      Parameters p3 = {gs,  us,  0.0,       0.0, 0.0,
+//                       0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal
+//                                              // (as zinc blende)
+//
+//      realnum seed1 = f[i];
+//      realnum seed2 =
+//          fw_2_atZ[i]; // TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED
+//                       // SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+//      realnum seed3 = fw_3_atZ[i];
+//
+//      cout << "PRENR s1" << seed1 << " fw_2_atZ[i]" << fw_2_atZ[i] << " s3" << seed3
+//           << " chi2:" << chi2new[i] << "chi3:" << chi3[i] << " us " << us << " us_2 " << us_2
+//           << " us_3 " << us_3 << " u1 " << u1[i] << " gs_2" << gs_2 << endl;
+//
+//      /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
+//      ///  Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
+//      runNR(seed2, seed3, seed1, &fw_3_atZ[i], &fw_2_atZ[i], &f[i], p1, p2,
+//            p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
+//    }
+//
+//    // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and
+//    // then calculate f_2 and f_3..
+//    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
+//
+//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//
+//      //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
+//      f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
+//               0.25; // interpolation here.
+//    }
+//
+//    PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
+//
+//      if (chi2new[i] == 0) { continue; } // TODO should this be in these two interpolation loops??
+//
+//      //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
+//      f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]) *
+//               0.25; // interpolation here
+//    }
+//    //                                   z            x            z     x
+//    // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+//
+//    /// }
+//  }
+//}

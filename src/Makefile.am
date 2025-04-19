@@ -4,7 +4,7 @@ pkginclude_HEADERS = meep/mympi.hpp meep/vec.hpp meep/meep-config.h meepgeom.hpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-BUILT_SOURCES = sphere-quad.h  meep/meep-config.h
+BUILT_SOURCES = sphere-quad.h step_generic_stride1.cpp meep/meep-config.h
 
 HDRS = meep.hpp meep_internals.hpp meep/mympi.hpp meep/vec.hpp	\
 bicgstab.hpp meepgeom.hpp material_data.hpp adjust_verbosity.hpp
@@ -17,7 +17,7 @@ initialize.cpp integrate.cpp integrate2.cpp material_data.cpp monitor.cpp mympi.
 multilevel-atom.cpp near2far.cpp output_directory.cpp random.cpp 	\
 sources.cpp step.cpp step_db.cpp stress.cpp structure.cpp structure_dump.cpp		\
 susceptibility.cpp time.cpp update_eh.cpp mpb.cpp update_pols.cpp 	\
-vec.cpp step_generic.cpp step_generic_stride1.cpp meepgeom.cpp GDSIIgeom.cpp newton_raphson.cpp $(HDRS) $(BUILT_SOURCES)
+vec.cpp step_generic.cpp meepgeom.cpp GDSIIgeom.cpp newton_raphson.cpp $(HDRS) $(BUILT_SOURCES)
 
 SUBDIRS = support
 libmeep_la_LIBADD = support/libsupport.la
