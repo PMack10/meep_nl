@@ -261,7 +261,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
         cout << "Done linear 2 " <<  endl;
-      cout << "Done linear 2b "  << s->chi2[ez][0] << endl;
+      cout << "Done linear 2b " << typeid(s->chi2[ez]).name() << endl;
       cout << "Done linear 2c "  << ecInLoop << endl;
 
 
