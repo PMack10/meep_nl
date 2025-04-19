@@ -260,7 +260,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
-        cout << "Done linear 2" << endl;
+        cout << "Done linear 2" << ft << "  " << s->chi2[ez][i] << "  " << ecInLoop << endl;
 
 
       /// START OF NL VERSION OF STEP_UPDATE_EDHB>>>>>>>>> This is outside the FOR_FT_COMPONENTS
@@ -319,7 +319,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           //}
         }
       } /// end of new NL stuff
-
+      cout << "next DOCMP" << endl;
     } /// added } here to split the two loop macros
   }
 
