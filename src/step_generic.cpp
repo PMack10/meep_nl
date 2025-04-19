@@ -726,9 +726,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                                   chi3[i]);
         }
       }
-      cout << "at chi3 else" << endl;
+      
 
       else {
+        cout << "at chi3 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -748,9 +749,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
         }
       }
-      cout << "at chi3 u1 else" << endl;
+      
 
       else {
+        cout << "at chi3 u1 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -795,9 +797,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 
           meep::abort("bug - didn't swap off-diagonal terms!?");
         }
-        cout << "lydtser " << endl;
 
         else {
+        cout << "lydtser " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
@@ -805,7 +807,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
       }
-      cout << "tsrtkr " << endl;
 
       else if (u) {
         cout << "most basic case  " << endl;
