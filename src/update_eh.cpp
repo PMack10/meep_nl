@@ -260,14 +260,19 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
 
+        cout << "Done linear 2" << endl;
+
+
       /// START OF NL VERSION OF STEP_UPDATE_EDHB>>>>>>>>> This is outside the FOR_FT_COMPONENTS
       /// loop becasue we're doing all 3 field components at once in the NR solver!
       /// TODO this bit is only for the PML case [is it??], need another one where it's not pml
       /// case..? handle the NL chunks and pass in all xyz field components in at once.
       if (s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes)
-                                          /// of chi3... TODO check s->chi3[ec] 
-       if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
-          cout << "Doing Nonlinear" << endl;
+          cout << "Doing Nonlinear 1: " << ft << "  " << s->chi2[ez][i]
+               << "  " << ecInLoop << endl; /// of chi3... TODO check s->chi3[ec] 
+
+        if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
+          cout << "Doing Nonlinear 2" << endl;
             //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
             //  std::cout << "ec != ez!! ec:" << ec
             //            << std::endl; /// TODO, ec might not print as a variable I suppose...
