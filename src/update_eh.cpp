@@ -17,9 +17,10 @@
 
 #include <string.h>
 #include <assert.h>
-
 #include "meep.hpp"
 #include "meep_internals.hpp"
+#include <iostream>
+
 
 using namespace std;
 
@@ -254,6 +255,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             //}
           }
         }
+        cout << "Done linear" << endl;
       } /// The FOR_FT_COMPONENTS loop should close out on ec = Ez, therefore for convenience, start
         /// the NL STEP_UPDATE_EDHB with the main field and field locations as Z, and X and Y as
       /// the 'auxiliaries' which are to be calculated by interpolation...
@@ -265,7 +267,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
       if (s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes)
                                           /// of chi3... TODO check s->chi3[ec] 
        if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
-
+          cout << "Doing Nonlinear" << endl;
             //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
             //  std::cout << "ec != ez!! ec:" << ec
             //            << std::endl; /// TODO, ec might not print as a variable I suppose...
@@ -290,7 +292,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
             /// Now do nonlinear xyz e field step update:  /// TODO! need to ensure correct 'ec'
             /// components go into all these (i.e, z, x, y)
-         if (f[ecInLoop][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
+       //  if (f[ecInLoop][cmp] != f[dc][cmp]) { // not sure if this 'if' is still needed - might cause
                                             // probs? TODO - leave for now, see what happens
           STEP_UPDATE_EDHB_NL(f[ez][cmp], f[ex][cmp], f[ey][cmp],
               ez, gv, 
@@ -309,7 +311,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
               s->sig[dsigw], s->sig[dsigw_2], s->sig[dsigw_3],
               s->kap[dsigw], s->kap[dsigw_2], s->kap[dsigw_3]);
 
-          }
+          //}
         }
       } /// end of new NL stuff
 

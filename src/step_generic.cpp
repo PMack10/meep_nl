@@ -846,6 +846,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       PLOOP_OVER_IVECS(gv, is, ie, i) {
 
           if (chi2new[i] == 0) { 
+              cout << "Continuing" << endl;
               continue; 
           }
         realnum gs = g[i]; // dmpZ
@@ -993,6 +994,16 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
   }
 }
+
+//#ifndef DONT_CALL_NL
+//void __dummy_call_to_step_update_EDHB_NL() {
+//  step_update_EDHB_NL(nullptr, nullptr, nullptr, NO_COMPONENT, *(grid_volume *)nullptr, ivec(),
+//                      ivec(), ivec(), ivec(), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+//                      nullptr, nullptr, 0, 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr,
+//                      nullptr, NO_DIRECTION, NO_DIRECTION, NO_DIRECTION, nullptr, nullptr, nullptr,
+//                      nullptr, nullptr, nullptr);
+//}
+//#endif
 
 } // namespace meep
 
