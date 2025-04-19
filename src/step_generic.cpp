@@ -785,7 +785,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
+        cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
+          cout << u[i] << "  "<< g[i] << endl;
+
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us);
