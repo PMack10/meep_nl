@@ -199,8 +199,8 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
       bool counter = false;
       for (int i = 2, imax = 999; i < imax; i *= i) {
-       // if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3)) {
-        if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
+       if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3)) {
+     //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
          if (counter) { cout << "True " << i << endl; 
          sleep(19);
          }
