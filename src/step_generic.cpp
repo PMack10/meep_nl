@@ -1003,9 +1003,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];
 
-       /*           cout << "PRENR s1" << endl;
+          /*        cout << "PRENR s1" << endl;
             cout << seed1 << endl;
-                  cout << " fw_2_atZ[i]" << fw_2_atZ[i] << endl;
+                  cout << " fw_2_atZ[i]" << seed2 << endl;
             cout << " s3" << seed3 << endl;
                   cout << " chi2:" << chi2new[i] << endl;
             cout << "chi3:" << chi3[i] << endl;
@@ -1013,6 +1013,10 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             cout << " us_2 " << us_2 << endl;
                   cout << " us_3 " << us_3 << endl;
                   cout << " gs_2" << gs_2 << endl;*/
+
+
+                    // TODO CURRENTLY going wrong HERE!
+                    // NR is not converging after 50, suggesting inputs are not correct...
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.

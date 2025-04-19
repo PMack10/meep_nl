@@ -5,7 +5,7 @@
 #include <vector>
 #include "meep.hpp"
 #include "newton_raphson.hpp"
-
+#include <unistd.h>
 
 
 /*
@@ -89,7 +89,7 @@ int rank3x3(const vector<vector<double> > &M) {
   return 1;
 }
 
-void newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
+bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
                              const Parameters &p2, const Parameters &p3,  realnum* fw,
                              realnum* fw_2,
                              realnum* fw_3) {
@@ -118,10 +118,12 @@ void newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
       *fw = x; /// Update E field values!
    *fw_2 = y;
       *fw_3 = z;
-      return;
+      return true;
     }
   }
+  
   cout << "Newton's method did not converge within " << MAX_ITERATIONS << " iterations.\n";
+  return false;
 }
 
 vector<double> equations(double x, double y, double z, const Parameters &p1, const Parameters &p2,
@@ -187,13 +189,21 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       return;
       }
       // END CHECK 2
-      //std::cout << "Seeds: x0:" << x0 << "    y0:" << y0 << "   z0:" << z0 << std::endl;
-      //std::cout << "D-P: a:" << a << "    b:" << b << "   c:" << c << std::endl;
-      //Parameters p1 = {a, 3.2, 0, 0, 0, 0.000002, 0, 0}; // p1.A is the D-P field
+
+      //Parameters p1 = {a, 3.2, 0, 0, 0, 0.000002, 0, 0}; // p1.A is the D-P field p1.B is epsilon, then chi2
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
   
-      newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw,  fw_2,  fw_3); 
+      if (!newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3))
+      {
+        cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw << " fw2: "
+             << *fw_2 << "fw3: " << *fw_3 << endl;
+        cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+        sleep(1);
+
+      }
     
     
   }

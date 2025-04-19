@@ -278,7 +278,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
         if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
       //    cout << "Doing Nonlinear 2" << endl;
-          // TODO CURRENTLY GETTING STUCK SOMEWHERE AFTER THIS POINT!
+  
             //if (ec != ez) { // CHECKPOINT - TODO doesn't currently work because ec isn't accessible here anyway..
             //  std::cout << "ec != ez!! ec:" << ec
             //            << std::endl; /// TODO, ec might not print as a variable I suppose...
