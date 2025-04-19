@@ -714,6 +714,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
+      cout << "at chi3" << endl;
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -725,6 +726,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                                   chi3[i]);
         }
       }
+      cout << "at chi3 else" << endl;
+
       else {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
@@ -734,6 +737,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
+      cout << "at chi3 u1" << endl;
+
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -743,6 +748,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
         }
       }
+      cout << "at chi3 u1 else" << endl;
+
       else {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
@@ -752,10 +759,16 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u2) { // 2x2 off-diagonal u
+      cout << "abrte" << endl;
+
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
+      cout << "at chi3 diag " << endl;
+
       if (chi3) {
+        cout << "rzjrejz " << endl;
+
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -767,6 +780,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
+          cout << "ahrewjr " << endl;
+
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
@@ -775,7 +790,12 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                    calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
           }
         }
-        else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
+        else if (g2) { 
+        cout << "ykdrs " << endl;
+            
+            meep::abort("bug - didn't swap off-diagonal terms!?"); }
+        cout << "lydtser " << endl;
+
         else {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
@@ -784,6 +804,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
       }
+      cout << "tsrtkr " << endl;
+
       else if (u) {
         cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -794,8 +816,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           f[i] = (gs * us);
         }
       }
-      else
+      else {
+        cout << "jktydtrew " << endl;
+
         PLOOP_OVER_IVECS(gv, is, ie, i) { f[i] = g[i]; }
+      }
     }
   }
 }

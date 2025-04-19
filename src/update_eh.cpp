@@ -223,7 +223,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             memcpy(f_w_prev[ec][cmp], f_w[ec][cmp] ? f_w[ec][cmp] : f[ec][cmp],
                    sizeof(realnum) * gv.ntot());
           }
-          cout << "Doing linear pre step call" << ft << "  " << ec << "  "<<i<<  endl;
+          cout << "Doing linear pre step call" << ft << "  " << ec << "  "<< i<<  endl;
 
           /// if (!s->chi3[ec] || ft == H_stuff ) { /// Add this 'if not chi3' (hack, using chi3 as
           /// a flag, actual value not relevant so long as it is non-zero for the 2nd order NL
