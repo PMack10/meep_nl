@@ -966,6 +966,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
   }
  
   else {            /////////////// no PML (no fw) ///////////////////
+    cout << "in NONPml NL case 1 " << endl;
     
     ///  if (chi3) { /// // TODO delete if
         
@@ -980,7 +981,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         PLOOP_OVER_IVECS(gv, is, ie, i) {
 
                     if (chi2new[i] == 0.0) { continue; }// 
-
+    cout << "inrtshtj " << endl;
+    
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX
@@ -990,6 +992,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum us = 1 / u[i]; 
             realnum us_2 = 1 / u_2[i]; 
             realnum us_3 = 1 / u_3[i];
+            cout << "lgsfdg " << endl;
 
             // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
             Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
@@ -999,6 +1002,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum seed1 =  f[i];
             realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];
+            cout << "ykskrsts " << endl;
 
                   cout << "PRENR s1" << seed1 << " fw_2_atZ[i]" << fw_2_atZ[i] << " s3" << seed3
                  << " chi2:" << chi2new[i] << "chi3:"<< chi3[i] << " us " << us << " us_2 " << us_2 << " us_3 "
