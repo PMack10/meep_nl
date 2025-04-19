@@ -27,8 +27,8 @@ namespace meep {
 
 
 
-const double TOLERANCE = 1e-9;
-const int MAX_ITERATIONS = 50;
+const double TOLERANCE = 1e-10;
+const int MAX_ITERATIONS = 500;
 
 //// Struct to hold constant parameters for each equation
 //struct Parameters { // moved to .hpp??!
@@ -177,15 +177,19 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
   //  cout << "Doing NR" << endl;
-
+       
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
       int rankM = rank3x3(M);
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
-        cout << " s1" << seed1 << " s2" << seed2 << " s3" << seed3 << " f1" << *fw << " fw2" << *fw_2<< "fw3" << *fw_3 << endl;
-        cout << " p1A" << p1.A << " p1B" << p1.B << " p1F" << p1.F << endl;
-           
+        cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw << " fw2: "
+             << *fw_2 << "fw3: " << *fw_3 << endl;
+        cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+        sleep(1);
+
       return;
       }
       // END CHECK 2
@@ -194,18 +198,17 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
   
-      if (!newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3))
-      {
-        cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw << " fw2: "
-             << *fw_2 << "fw3: " << *fw_3 << endl;
-        cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
-        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
-        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-        sleep(1);
-
+      for (int i = 0, imax = 1; i < imax; ++i) {
+        if (!newtonRaphson(seed1+983.6*i, seed2-5352.4*i, seed3+3895*i, p1, p2, p3, fw, fw_2, fw_3)) {
+          cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
+               << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+          cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+          cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+          cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+          sleep(1);
+        }
       }
-    
-    
+      cout << "NR didn't converge" << endl;
   }
 
 }
