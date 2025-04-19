@@ -198,8 +198,12 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
   
-      for (int i = 0, imax = 1; i < imax; ++i) {
-        if (!newtonRaphson(seed1+983.6*i, seed2-5352.4*i, seed3+3895*i, p1, p2, p3, fw, fw_2, fw_3)) {
+      for (int i = 0, imax = 4297458100; i < imax; i*=i) {
+        if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3)) {
+          break;
+        }
+        else {
+          cout << "NR didn't converge: " << i << endl;
           cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
           cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
@@ -208,7 +212,6 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           sleep(1);
         }
       }
-      cout << "NR didn't converge" << endl;
   }
 
 }
