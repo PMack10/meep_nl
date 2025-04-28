@@ -897,7 +897,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         realnum us_3 = 1 / u_3[i];
 
        // if ( (us - 11.5)*(us-10.5) >0){}
-        cout << "us " << us << " us2 " << us_2 << endl;
+       // cout << "us " << us << " us2 " << us_2 << endl;
 
 
         /// #will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2, 0, 0 } etc;
@@ -993,7 +993,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum us_2 = 1 / u_2[i]; 
             realnum us_3 = 1 / u_3[i];
           ///cout << "lgsfdg " << endl;
-            cout << "us " << us << " us2 " << us_2 << endl;
+          //  cout << "us " << us << " us2 " << us_2 << endl;
 
             // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
             Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
