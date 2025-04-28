@@ -918,9 +918,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
   ///cout << "in Pml NL case 1 done NR" << endl;
 
         // Do the other fields for PML (whatever they do exactly..)
-        DEF_kw; /// TODO  - might not be relevant because its for PML and PML won't use this
-                /// implementation so long as we don't have a chi3(flag) defined within a PML
-                /// layer?!
+        DEF_kw; 
         /// uses kw0, skw1/2/3. not sure what it does exactly...
         realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw]; // Ez
         f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;

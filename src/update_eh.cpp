@@ -294,6 +294,8 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
                   new realnum[gv.ntot()]; // for temp Ex at Z positions fields
               fTempNlFieldsForInterpolation[1][cmp] =
                   new realnum[gv.ntot()]; // for temp Ey at Z positions fields
+              memset(fTempNlFieldsForInterpolation[0][cmp], 0, gv.ntot() * sizeof(realnum));
+              memset(fTempNlFieldsForInterpolation[1][cmp], 0, gv.ntot() * sizeof(realnum)); /// TODO added this, check if it works..
             }
 
             direction dsigw0_2 = d_1; /// X  Additional dsigw terms for other two field directions

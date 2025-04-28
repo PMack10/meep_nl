@@ -178,6 +178,9 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         
   //  cout << "Doing NR" << endl;
        
+    double fwxInitial = *fw;
+
+
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
       int rankM = rank3x3(M);
@@ -188,7 +191,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-        sleep(1);
+        sleep(4);
 
       return;
       }
@@ -218,10 +221,15 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           counter = true;
         }
       }
-      if (counter) {
+      if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
-       // sleep(12);
+        cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
+        sleep(12);
       }
+
+     // cout << "FIz: " << fwxInitial << " FOz: " << *fw<<endl;
+
+
   }
 
 }
