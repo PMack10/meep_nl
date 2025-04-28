@@ -91,8 +91,8 @@ int rank3x3(const vector<vector<double> > &M) {
 
 bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
                              const Parameters &p2, const Parameters &p3,  realnum* fw,
-                             realnum* fw_2,
-                             realnum* fw_3) {
+                             realnum* fw_2, realnum *fw_3, double tol1,
+                   double tol2, double tol3) {
   for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
     vector<double> F = equations(x, y, z, p1, p2, p3);
     vector<vector<double> > J = jacobian(x, y, z, p1, p2, p3);
@@ -112,11 +112,12 @@ bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
     y -= delta[1];
     z -= delta[2];
 
-    if (fabs(delta[0]) < TOLERANCE && fabs(delta[1]) < TOLERANCE && fabs(delta[2]) < TOLERANCE) {
+   // if (fabs(delta[0]) < TOLERANCE && fabs(delta[1]) < TOLERANCE && fabs(delta[2]) < TOLERANCE) {
+      if (fabs(delta[0]) < tol1 && fabs(delta[1]) < tol2 && fabs(delta[2]) < tol3) {
    //   cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
    //   cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
       *fw = x; /// Update E field values!
-   *fw_2 = y;
+      *fw_2 = y;
       *fw_3 = z;
       return true;
     }
@@ -180,6 +181,9 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
        
     double fwxInitial = *fw;
 
+    double tol1 = TOLERANCE * *fw;
+    double tol2 = TOLERANCE * *fw_2;
+    double tol3 = TOLERANCE * *fw_3; 
 
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
@@ -191,7 +195,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-        sleep(4);
+      //  sleep(12);
 
       return;
       }
@@ -202,7 +206,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
       bool counter = false;
       for (int i = 2, imax = 270000; i < imax; i*=3) {
-       if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3)) {
+       if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
      //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
      /*    if (counter) { cout << "True " << i << endl; 
          sleep(12);
@@ -211,20 +215,20 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           break;
         }
         else {
-          cout << "NR didn't converge: " << i << endl;
+      /*    cout << "NR didn't converge: " << i << endl;
           cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
           cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
           cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
           cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-          
+          */
           counter = true;
         }
       }
       if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
         cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
-        sleep(12);
+      //  sleep(12);
       }
 
      // cout << "FIz: " << fwxInitial << " FOz: " << *fw<<endl;

@@ -896,6 +896,10 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         realnum us_2 = 1 / u_2[i];
         realnum us_3 = 1 / u_3[i];
 
+       // if ( (us - 11.5)*(us-10.5) >0){}
+        cout << "us " << us << " us2 " << us_2 << endl;
+
+
         /// #will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2, 0, 0 } etc;
         Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
         Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
@@ -903,11 +907,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                          0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components
                                                 // equal (as zinc blende)
 
-        realnum seed1 = fw[i];
-        realnum seed2 =
-            fw_2_atZ[i]; // TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED
-                         // SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
-        realnum seed3 = fw_3_atZ[i];
+        realnum seed1 = fw[i]; // Z
+        realnum seed2 = fw_2_atZ[i]; // X
+        realnum seed3 = fw_3_atZ[i]; // Y
 
   ///cout << "in Pml NL case 1 at NR " << endl;
 
@@ -991,13 +993,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum us_2 = 1 / u_2[i]; 
             realnum us_3 = 1 / u_3[i];
           ///cout << "lgsfdg " << endl;
+            cout << "us " << us << " us2 " << us_2 << endl;
 
             // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
             Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
             Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
-            realnum seed1 =  f[i];
+            realnum seed1 = f[i];
             realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
             realnum seed3 = fw_3_atZ[i];
 
@@ -1018,7 +1021,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-            runNR(seed2, seed3, seed1, &fw_3_atZ[i], &fw_2_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
+            runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
                                        }
 
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
