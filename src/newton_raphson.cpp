@@ -181,9 +181,9 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
        
     double fwxInitial = *fw;
 
-    double tol1 = max(TOLERANCE * *fw, TOLERANCE);
-    double tol2 = max(TOLERANCE * *fw_2, TOLERANCE);
-    double tol3 = max(TOLERANCE * *fw_3, TOLERANCE);
+    double tol1 = fmax(TOLERANCE * (*fw), TOLERANCE);
+    double tol2 = fmax(TOLERANCE * (*fw_2), TOLERANCE);
+    double tol3 = fmax(TOLERANCE * (*fw_3), TOLERANCE);
 
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
