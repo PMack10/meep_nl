@@ -27,7 +27,7 @@ namespace meep {
 
 
 
-const double TOLERANCE = 1e-10;
+const double TOLERANCE = 1e-9;
 const int MAX_ITERATIONS = 500;
 
 //// Struct to hold constant parameters for each equation
@@ -195,7 +195,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-      //  sleep(12);
+        sleep(4);
 
       return;
       }
@@ -215,20 +215,21 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           break;
         }
         else {
-      /*    cout << "NR didn't converge: " << i << endl;
+          cout << "NR didn't converge: " << i << endl;
+          cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
           cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
           cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
           cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
           cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-          */
+          
           counter = true;
         }
       }
       if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
         cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
-      //  sleep(12);
+        sleep(12);
       }
 
      // cout << "FIz: " << fwxInitial << " FOz: " << *fw<<endl;
