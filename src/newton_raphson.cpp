@@ -193,9 +193,9 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
        
       double fwxInitial = *fw;
       MAX_ITERATIONS = 250;
-      double tol1 = fmax(TOLERANCE * (*fw), TOLERANCE);
-      double tol2 = fmax(TOLERANCE * (*fw_2), TOLERANCE);
-      double tol3 = fmax(TOLERANCE * (*fw_3), TOLERANCE);
+      double tol1 = fmax(fabs(TOLERANCE * (*fw)), TOLERANCE);
+      double tol2 = fmax(fabs(TOLERANCE * (*fw_2)), TOLERANCE);
+      double tol3 = fmax(fabs(TOLERANCE * (*fw_3)), TOLERANCE);
       double _seed1 = seed1;
       double _seed2 = seed2;
       double _seed3 = seed3;
