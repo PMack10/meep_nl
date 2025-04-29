@@ -319,7 +319,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
         cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
-        cout << "NR didn't converge: " << i << endl;
+        cout << "NR didn't converge: " << endl;
         cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
         cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
              << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
