@@ -173,13 +173,16 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
   return x;
 }
 
-static uniform_real_distribution<double> dist(-1, 1); // Define range
+//static uniform_real_distribution<double> dist(-1, 1); // Define range
+static uniform_real_distribution<double> distSign(-1.0, 1.0); // Define range
+std::lognormal_distribution<double> dist(1.0, 90);
 static random_device rd;                              // Obtain a random seed
 static double seedMax = 1e125;
 
 double getRandomNumber() {
-  static mt19937 gen(rd()); // Seed the generator
-  return dist(gen) * 1e80;
+  static mt19937 gen(rd()); // Seed the generator 
+  return dist(gen)*distSign(gen);// *1e80;
+ // return dist(gen) * 1e80;
 }
 
 
@@ -217,7 +220,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
       bool counter = false;
-      for (int i = 0, imax = 50; i < imax; ++i) {
+      for (int i = 0, imax = 100; i < imax; ++i) {
         if (newtonRaphson(_seed1, _seed2, _seed3, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
           //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
      /*     cout << "Converged " << i << endl;
@@ -326,7 +329,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-        sleep(12);
+        sleep(7);
       }
 
      // cout << "FIz: " << fwxInitial << " FOz: " << *fw<<endl;
