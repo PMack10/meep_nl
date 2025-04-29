@@ -231,13 +231,13 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           break;
         }
         else {
-          cout << "NR didn't converge: " << i << endl;
-          cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
-          cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
-               << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
-          cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
-          cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
-          cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+          //cout << "NR didn't converge: " << i << endl;
+          //cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
+          //cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
+          //     << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+          //cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+          //cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+          //cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
 
           /// try adjusting seeds to see if it helps NR to converge:
           switch (i) {
@@ -319,6 +319,13 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
         cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
+        cout << "NR didn't converge: " << i << endl;
+        cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
+        cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
+             << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+        cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
         sleep(12);
       }
 
