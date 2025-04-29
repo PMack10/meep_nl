@@ -290,6 +290,9 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
             /// Ey at the Z positions (for subsequent interpolation to their correct positions)
             // lazily allocate the two temp extra Z-dimensioned W auxiliary fields:
             if (i == 0 && !fTempNlFieldsForInterpolation[0][cmp]) {
+        cout << "fieldtemp arr check " << fTempNlFieldsForInterpolation[0][0][0] << endl;
+        cout << "fieldtemp arr type " << typeid(fTempNlFieldsForInterpolation[0][0][0]).name() << endl;
+
               fTempNlFieldsForInterpolation[0][cmp] =
                   new realnum[gv.ntot()]; // for temp Ex at Z positions fields
               fTempNlFieldsForInterpolation[1][cmp] =

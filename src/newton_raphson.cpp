@@ -27,7 +27,7 @@ namespace meep {
 
 
 
-const double TOLERANCE = 1e-9;
+const double TOLERANCE = 1e-8;
 int MAX_ITERATIONS = 500;
 
 //// Struct to hold constant parameters for each equation
@@ -188,7 +188,7 @@ double getRandomNumber() {
 
 void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw_2, realnum* fw_3, const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
-        
+  std::cout << std::fixed << std::setprecision(12);
   //  cout << "Doing NR" << endl;
        
       double fwxInitial = *fw;
@@ -206,7 +206,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       if (rankM < 3) {
         cout << "Coefficient matrix has rank < 3: The system is globally dependent!" << endl;
         cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw << " fw2: "
-             << *fw_2 << "fw3: " << *fw_3 << endl;
+             << *fw_2 << " fw3: " << *fw_3 << endl;
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
@@ -325,7 +325,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << "NR didn't converge: " << endl;
         cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
         cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
-             << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+             << " fw2: " << *fw_2 << " fw3: " << *fw_3 << endl;
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
         cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
         cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
