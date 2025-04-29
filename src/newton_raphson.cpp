@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <iomanip>
-//#include <random> 
+#include <random> 
 #include <vector>
 #include "meep.hpp"
 #include "newton_raphson.hpp"
@@ -28,7 +28,7 @@ namespace meep {
 
 
 const double TOLERANCE = 1e-9;
-const int MAX_ITERATIONS = 500;
+int MAX_ITERATIONS = 500;
 
 //// Struct to hold constant parameters for each equation
 //struct Parameters { // moved to .hpp??!
@@ -173,17 +173,29 @@ vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<
   return x;
 }
 
+static uniform_real_distribution<double> dist(-1, 1); // Define range
+static random_device rd;                              // Obtain a random seed
+static double seedMax = 1e125;
+
+double getRandomNumber() {
+  static mt19937 gen(rd()); // Seed the generator
+  return dist(gen) * 1e80;
+}
+
 
 void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw_2, realnum* fw_3, const Parameters &p1, const Parameters &p2,
            const Parameters &p3) { // TODO need to confirm that passing fw through as a ref like this actually works...
         
   //  cout << "Doing NR" << endl;
        
-    double fwxInitial = *fw;
-
-    double tol1 = fmax(TOLERANCE * (*fw), TOLERANCE);
-    double tol2 = fmax(TOLERANCE * (*fw_2), TOLERANCE);
-    double tol3 = fmax(TOLERANCE * (*fw_3), TOLERANCE);
+      double fwxInitial = *fw;
+      MAX_ITERATIONS = 250;
+      double tol1 = fmax(TOLERANCE * (*fw), TOLERANCE);
+      double tol2 = fmax(TOLERANCE * (*fw_2), TOLERANCE);
+      double tol3 = fmax(TOLERANCE * (*fw_3), TOLERANCE);
+      double _seed1 = seed1;
+      double _seed2 = seed2;
+      double _seed3 = seed3;
 
       // CHECK 2:
       vector<vector<double> > M = computeCoefficientMatrix(p1, p2, p3);
@@ -205,27 +217,105 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
       bool counter = false;
-      for (int i = 2, imax = 270000; i < imax; i*=3) {
-       if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
-     //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
-     /*    if (counter) { cout << "True " << i << endl; 
-         sleep(12);
-         }*/
-          counter = false;  
+      for (int i = 0, imax = 35; i < imax; ++i) {
+        if (newtonRaphson(_seed1, _seed2, _seed3, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
+          //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
+          cout << "Converged " << i << endl;
+          cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
+          cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
+               << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+          cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+          cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+          cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+          counter = false;
           break;
         }
         else {
           cout << "NR didn't converge: " << i << endl;
           cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
-          cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
+          cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
           cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
           cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
           cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
-          
+
+          /// try adjusting seeds to see if it helps NR to converge:
+          switch (i) {
+            case 0:
+              _seed1 = seed1 * seedMax;
+              MAX_ITERATIONS = 600;
+              break;
+            case 1:
+              _seed1 = seed1;
+              _seed2 = seed2 * seedMax;
+              break;
+            case 2:
+              _seed2 = seed2;
+              _seed3 = seed3 * seedMax;
+              break;
+            case 3:
+              _seed3 = seed3;
+              _seed1 = -seed1 * seedMax;
+              break;
+            case 4:
+              _seed1 = seed1;
+              _seed2 = -seed2 * seedMax;
+              break;
+            case 5:
+              _seed2 = seed2;
+              _seed3 = -seed3 * seedMax;
+              break;
+            case 6:
+              _seed1 = seed1 * seedMax;
+              _seed2 = seed2 * seedMax;
+              _seed3 = seed3;
+              break;
+            case 7:
+              _seed1 = seed1 * seedMax;
+              _seed2 = seed2;
+              _seed3 = seed3 * seedMax;
+              break;
+            case 8:
+              _seed1 = seed1;
+              _seed2 = seed2 * seedMax;
+              _seed3 = seed3 * seedMax;
+              break;
+            case 9:
+              _seed1 = -seed1 * seedMax;
+              _seed2 = -seed2 * seedMax;
+              _seed3 = seed3;
+              break;
+            case 10:
+              _seed1 = -seed1 * seedMax;
+              _seed2 = seed2;
+              _seed3 = -seed3 * seedMax;
+              break;
+            case 11:
+              _seed1 = seed1;
+              _seed2 = -seed2 * seedMax;
+              _seed3 = -seed3 * seedMax;
+              break;
+            case 12:
+              _seed1 = seed1 * seedMax;
+              _seed2 = seed2 * seedMax;
+              _seed3 = seed3 * seedMax;
+              break;
+            case 13:
+              _seed1 = -seed1 * seedMax;
+              _seed2 = -seed2 * seedMax;
+              _seed3 = -seed3 * seedMax;
+              break;
+            default:
+              _seed1 = getRandomNumber();
+              _seed2 = getRandomNumber();
+              _seed3 = getRandomNumber();
+              cout << "Getting Random seeds " << i<< endl;
+              break;
+          }
           counter = true;
         }
       }
+
       if (counter) { ///TODO if it still doesn't converge, consider not updating the fields or something...
         cout << "FALSE "  << endl;
         cout << "FIz: " << fwxInitial << " FOz: " << *fw << endl;
@@ -240,3 +330,29 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
 }
 
 
+
+
+/// OLD 'for' loop:
+
+// for (int i = 2, imax = 270000; i < imax; i*=3) {
+//  if (newtonRaphson(seed1+3.06*i, seed2-2.43*i, seed3+1.277*i, p1, p2, p3, fw, fw_2, fw_3, tol1,
+//  tol2, tol3)) {
+////   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
+///*    if (counter) { cout << "True " << i << endl;
+//    sleep(12);
+//    }*/
+//     counter = false;
+//     break;
+//   }
+//   else {
+//     cout << "NR didn't converge: " << i << endl;
+//     cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
+//     cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw
+//          << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
+//     cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
+//     cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
+//     cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+//
+//     counter = true;
+//   }
+// }
