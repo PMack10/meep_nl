@@ -312,7 +312,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
               _seed1 = getRandomNumber();
               _seed2 = getRandomNumber();
               _seed3 = getRandomNumber();
-              cout << "Getting Random seeds " << i<< endl;
+          //    cout << "Getting Random seeds " << i<< endl;
               break;
           }
           counter = true;

@@ -886,6 +886,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             ///cout << "Continuing" << endl;
               continue; 
           }
+          cout << "IN PML CASE!"<<endl;
+          sleep(2);
         realnum gs = g[i]; // dmpZ
         // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
         realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX
@@ -910,7 +912,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         realnum seed1 = fw[i]; // Z
         realnum seed2 = fw_2_atZ[i]; // X
         realnum seed3 = fw_3_atZ[i]; // Y
-
+        realnum fwprev = fw[i];
   ///cout << "in Pml NL case 1 at NR " << endl;
 
         /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
@@ -922,7 +924,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         // Do the other fields for PML (whatever they do exactly..)
         DEF_kw; 
         /// uses kw0, skw1/2/3. not sure what it does exactly...
-        realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw]; // Ez
+       realnum kapwkw = kapw[kw], sigwkw = sigw[kw]; // Ez
         f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
       }
 
