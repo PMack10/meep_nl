@@ -123,7 +123,7 @@ bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
     }
   }
   
-  cout << "Newton's method did not converge within " << MAX_ITERATIONS << " iterations.\n";
+ // cout << "Newton's method did not converge within " << MAX_ITERATIONS << " iterations.\n";
   return false;
 }
 
@@ -217,7 +217,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       //Parameters p2 = {b, 3.2, 0, 0, 0, 0, 0.000002, 0};
       //Parameters p3 = {c, 3.2, 0, 0, 0, 0, 0, 0.000002};
       bool counter = false;
-      for (int i = 0, imax = 35; i < imax; ++i) {
+      for (int i = 0, imax = 50; i < imax; ++i) {
         if (newtonRaphson(_seed1, _seed2, _seed3, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
           //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
      /*     cout << "Converged " << i << endl;
