@@ -20,6 +20,7 @@
 #include "config.h"
 #include "newton_raphson.hpp"
 #include <iostream>
+#include <unistd.h>
 
 #define RPR realnum *restrict
 
