@@ -992,9 +992,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
-            realnum us = 1 / u[i]; 
-            realnum us_2 = 1 / u_2[i]; 
+            //realnum us = 1 / u[i]; 
+            //realnum us_2 = 1 / u_2[i]; 
+            //realnum us_3 = 1 / u_3[i];          
+           
+            realnum us = 1 / u[i]   ; 
+            realnum us_2 = 1 / (   u_2[i]   );
             realnum us_3 = 1 / u_3[i];
+
           ///cout << "lgsfdg " << endl;
           //  cout << "us " << us << " us2 " << us_2 << endl;
 
@@ -1018,10 +1023,12 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                   cout << " us_3 " << us_3 << endl;
                   cout << " gs_2" << gs_2 << endl;*/
 
-            fw_2_atZ[i] = gs_2 * u_2[i];
+           /* fw_2_atZ[i] = gs_2 * u_2[i];
             fw_3_atZ[i] = gs_3 * u_3[i]; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+            f[i] = gs * u[i];*/
+            fw_2_atZ[i] = (  (g1[i] + g1[i - s1]) * u_2[i]   +    (g1[i + s] + g1[i + s - s1])*u_2[i+s]   )* 0.25;
+            fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s - s2])*u_2[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
             f[i] = gs * u[i];
-
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
