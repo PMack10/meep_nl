@@ -999,6 +999,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
             if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
               cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  "<< u_3[i]<<endl;
+              sleep(5);
+
             }
             realnum us = 1 / u[i]   ; 
             realnum us_2 = 1 / (   u_2[i]   );
@@ -1041,11 +1043,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             if (isnan(fw_2_atZ[i]) ||  isnan(fw_3_atZ[i]) || isnan(f[i]) ||isinf(fw_2_atZ[i]) ||  isinf(fw_3_atZ[i]) || isinf(f[i]) ){
         cout << "err " << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
               cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]<< endl;
+        sleep(5);
             }
-              if (i % 500 == 0) {
+           /*   if (i % 500 == 0) {
         cout<< "general print"<< fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
         cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i] << endl;
-            }
+
+            }*/
 
         }
 
