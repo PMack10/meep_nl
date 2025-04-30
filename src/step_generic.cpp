@@ -985,7 +985,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                     if (chi2new[i] == 0.0) { continue; }// 
   ///cout << "inrtshtj " << endl;
-                    cout << " in non pml case";
+                  //  cout << " in non pml case";
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
