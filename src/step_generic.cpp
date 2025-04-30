@@ -1033,10 +1033,16 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
         //    runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
-            if (i % 100 == 0) {
-              cout << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
+          //  if (i % 300 == 0) {
+            if (isnan(fw_2_atZ[i] ||  isnan(fw_3_atZ[i]) || isnan(f[i]) ||isinf(fw_2_atZ[i] ||  isinf(fw_3_atZ[i]) || isinf(f[i]) ){
+            cout << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
               cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]<< endl;
             }
+              if (i % 500 == 0) {
+        cout<< "general print"<< fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
+        cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i] << endl;
+            }
+
         }
 
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
