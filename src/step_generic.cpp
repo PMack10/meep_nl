@@ -996,6 +996,10 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             //realnum us_2 = 1 / u_2[i]; 
             //realnum us_3 = 1 / u_3[i];          
            
+
+            if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
+              cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  "<< u_3[i]<<endl;
+            }
             realnum us = 1 / u[i]   ; 
             realnum us_2 = 1 / (   u_2[i]   );
             realnum us_3 = 1 / u_3[i];
@@ -1034,7 +1038,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
         //    runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
           //  if (i % 300 == 0) {
-            if (isnan(fw_2_atZ[i] ||  isnan(fw_3_atZ[i]) || isnan(f[i]) ||isinf(fw_2_atZ[i] ||  isinf(fw_3_atZ[i]) || isinf(f[i]) ){
+            if (isnan(fw_2_atZ[i]) ||  isnan(fw_3_atZ[i]) || isnan(f[i]) ||isinf(fw_2_atZ[i]) ||  isinf(fw_3_atZ[i]) || isinf(f[i]) ){
         cout << "err " << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
               cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]<< endl;
             }
