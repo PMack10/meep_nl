@@ -984,6 +984,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         PLOOP_OVER_IVECS(gv, is, ie, i) {
 
                     if (chi2new[i] == 0.0) { continue; }// 
+
+                      if (i % 500 == 0) {
+                      cout << "at entry point" << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     "
+                           << f[i] << endl;
+                      cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]
+                           << endl;
+                    }
   ///cout << "inrtshtj " << endl;
                   //  cout << " in non pml case";
             realnum gs = g[i]; //dmpZ
@@ -1059,7 +1066,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
              //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
-                        f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here.
+                    //    f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here.
         }
 
         PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
@@ -1067,7 +1074,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
-                     f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)])*0.25; // interpolation here
+                   //  f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)])*0.25; // interpolation here
                    }
         //                                   z            x            z     x
         // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
