@@ -887,7 +887,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             ///cout << "Continuing" << endl;
               continue; 
           }
-          cout << "IN PML CASE!"<<endl;
+          cout << "IN PML CASE!"<<endl; // in theory it should never enter this case anyway, since the PML should not be located within the chi2 material...
           sleep(2);
         realnum gs = g[i]; // dmpZ
         // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
@@ -985,11 +985,11 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                     if (chi2new[i] == 0.0) { continue; }// 
   ///cout << "inrtshtj " << endl;
-    
+                    cout << " in non pml case";
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
-            realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX
-            realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY
+            realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
+            realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
             realnum us = 1 / u[i]; 
@@ -1018,13 +1018,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                   cout << " us_3 " << us_3 << endl;
                   cout << " gs_2" << gs_2 << endl;*/
 
+            fw_2_atZ[i] = gs_2 * u_2[i];
+            fw_3_atZ[i] = gs_3 * u_3[i]; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+            f[i] = gs * u[i];
 
-                    // TODO CURRENTLY going wrong HERE!
-                    // NR is not converging after 50, suggesting inputs are not correct...
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
             /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-            runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
+        //    runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
                                        }
 
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
