@@ -985,16 +985,19 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                     if (chi2new[i] == 0.0) { continue; }// 
 
-                      if (i % 150 == 13) {
-                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<< f[i] << endl;
-                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
-                    }
-  ///cout << "inrtshtj " << endl;
-                  //  cout << " in non pml case";
+
             realnum gs = g[i]; //dmpZ
           // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
             realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
+
+                      if (i % 150 == 13) {
+                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
+                          cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
+                          cout << "dmp interp  " << gs_2[i] << "  " << gs_3[i]  << endl;
+                          
+                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                    }
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
             //realnum us = 1 / u[i]; 
