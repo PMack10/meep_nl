@@ -21,6 +21,7 @@
 #include "newton_raphson.hpp"
 #include <iostream>
 #include <unistd.h>
+#include <iterator>
 
 #define RPR realnum *restrict
 
