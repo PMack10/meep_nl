@@ -984,10 +984,10 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
           ///  fw_2_atZ and fw_3_atZ need to have the same dim as f. If f[i] is i'th Ex field, f_2/3 are the Ex and Ey fields at the SAME location as the Ez field. According
           /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each other. The Ex and Ey fields at the correct yee cell locations 
           /// must therefore subsequently calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
- auto g1size = std::size(g1);
-  auto g2size = std::size(g2);
- auto fw2zsize = std::size(fw_2_atZ);
-  auto fw3zsize = std::size(fw_3_atZ);
+  const size_t g1size = gv.ntot();
+  const size_t g2size = gv.ntot();
+  const size_t fw2zsize = gv.ntot();
+  const size_t fw3zsize = gv.ntot();
 
         PLOOP_OVER_IVECS(gv, is, ie, i) {
                                    
