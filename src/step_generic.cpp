@@ -593,6 +593,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 
   /* As with step_curl, these loops are all essentially copies
      of the "MOST GENERAL CASE" loop with various terms thrown out. */
+  if (chi3) { cout << "IN CHI3!! " << endl;
+  }
 
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
   ///cout << "in linear loop PML" << endl;
@@ -820,6 +822,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
+        cout << " SHOULDN'T be here!" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i)
         {
         f[i] = g[i];
@@ -1023,7 +1026,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
 
             realnum seed1 = f[i];
-            realnum seed2 = fw_2_atZ[i];  //TODO THIS MIGHT FAIL BECAUSE FW FIELDS MAY NOT YET HAVE BEEN INITIALISED SO MAY NOT BE ABLE TO BE USED AS A SEED NUMBER ON FIRST LOOP...
+            realnum seed2 = fw_2_atZ[i];  
             realnum seed3 = fw_3_atZ[i];
 
           /*        cout << "PRENR s1" << endl;
@@ -1075,7 +1078,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
-                    // f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]  )*0.25; // interpolation here  //TODO THIS IS ERROR?
+                     f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]  )*0.25; // interpolation here  //TODO THIS IS ERROR?
                    }
         //                                   z            x            z     x
         // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
