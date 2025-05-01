@@ -994,7 +994,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                       if (i % 150 == 13) {
                           cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
                           cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
-                          cout << "dmp interp  " << gs_2[i] << "  " << gs_3[i]  << endl;
+                          cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
                           
                     //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
                     }
