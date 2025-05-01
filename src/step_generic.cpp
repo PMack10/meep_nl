@@ -1016,13 +1016,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
             realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
-                      if (i % 150 == 13) {
-                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
-                          cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
-                          cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
-                          
-                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
-                    }
+                    //  if (i % 150 == 13) {
+                    //      cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
+                    //      cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
+                    //      cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
+                    //      
+                    ////  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                    //}
 
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
@@ -1099,7 +1099,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
 
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
-
+            if (!std::isfinite(fw_3_atZ[i]) ||
+                !std::isfinite(fw_3_atZ[i + s]) ||
+                !std::isfinite(fw_3_atZ[i - s2]) ||
+                !std::isfinite(fw_3_atZ[i + (s - s2)])) {
+                std::cerr << "Bad fw3 value at i = " << i << "\n";
+              sleep(20);
+            }
+            cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
                      f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
                    }
