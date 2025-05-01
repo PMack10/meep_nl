@@ -1106,7 +1106,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                 std::cerr << "Bad fw3 value at i = " << i << "\n";
               sleep(20);
             }
-            cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
+        //    cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
                      f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
                    }
