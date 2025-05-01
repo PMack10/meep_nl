@@ -983,10 +983,31 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
           ///  fw_2_atZ and fw_3_atZ need to have the same dim as f. If f[i] is i'th Ex field, f_2/3 are the Ex and Ey fields at the SAME location as the Ez field. According
           /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each other. The Ex and Ey fields at the correct yee cell locations 
           /// must therefore subsequently calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
+ auto g1size = std::size(g1);
+  auto g2size = std::size(g2);
+ auto fw2zsize = std::size(fw_2_atZ);
+  auto fw3zsize = std::size(fw_3_atZ);
 
         PLOOP_OVER_IVECS(gv, is, ie, i) {
+                                   
+            if (chi2new[i] == 0.0) { continue; }// 
 
-                    if (chi2new[i] == 0.0) { continue; }// 
+            if (i + s >= g1size || i - s2 < 0 || i + (s - s2) >= g1size) {
+              std::cerr << "1: g1 out of bounds at i = " << i << "\n";
+              sleep(15);
+            }
+            if (i + s >= g2size || i - s2 < 0 || i + (s - s2) >= g2size) {
+              std::cerr << "1: g2 out of bounds at i = " << i << "\n";
+              sleep(15);
+            }
+            if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
+              std::cerr << "1: fw2z out of bounds at i = " << i << "\n";
+              sleep(15);
+            }
+            if (i + s >= fw3zsize || i - s2 < 0 || i + (s - s2) >= fw3zsize) {
+              std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
+              sleep(15);
+            }
 
 
             realnum gs = g[i]; //dmpZ
@@ -994,13 +1015,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
             realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
-                    //  if (i % 150 == 13) {
-                    //      cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
-                    //      cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
-                    //      cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
-                    //      
-                    ////  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
-                    //}
+                      if (i % 150 == 13) {
+                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
+                          cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
+                          cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
+                          
+                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                    }
+
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
             //realnum us = 1 / u[i]; 
@@ -1077,8 +1099,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
+                                                 if (i + s >= array_size || i - s2 < 0 ||
+                                    i + (s - s2) >= array_size) {
+                                  std::cerr << "2: Index out of bounds at i = " << i << "\n";
+                                  sleep(44);
+                                }
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
-                     f_3[i] = (fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]  )*0.25; // interpolation here  //TODO THIS IS ERROR?
+                     f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
                    }
         //                                   z            x            z     x
         // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
