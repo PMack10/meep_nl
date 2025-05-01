@@ -1001,14 +1001,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
               std::cerr << "1: g2 out of bounds at i = " << i << "\n";
               sleep(15);
             }
-            if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
-              std::cerr << "1: fw2z out of bounds at i = " << i << "\n";
-              sleep(15);
-            }
-            if (i + s >= fw3zsize || i - s2 < 0 || i + (s - s2) >= fw3zsize) {
-              std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
-              sleep(15);
-            }
+ 
 
 
             realnum gs = g[i]; //dmpZ
@@ -1097,7 +1090,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         }
 
         PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
-
+          if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
+            std::cerr << "1: fw2z out of bounds at i = " << i << "\n";
+            sleep(15);
+          }
+          if (i + s >= fw3zsize || i - s2 < 0 || i + (s - s2) >= fw3zsize) {
+            std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
+            sleep(15);
+          }
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
             if (!std::isfinite(fw_3_atZ[i]) ||
                 !std::isfinite(fw_3_atZ[i + s]) ||
@@ -1120,6 +1120,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
   }
 }
 
+
+
 //#ifndef DONT_CALL_NL
 //void __dummy_call_to_step_update_EDHB_NL() {
 //  step_update_EDHB_NL(nullptr, nullptr, nullptr, NO_COMPONENT, *(grid_volume *)nullptr, ivec(),
@@ -1129,6 +1131,12 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //                      nullptr, nullptr, nullptr);
 //}
 //#endif
+
+
+
+
+
+
 
 } // namespace meep
 
@@ -1346,3 +1354,11 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 //    /// }
 //  }
 //}
+
+
+
+
+
+
+
+
