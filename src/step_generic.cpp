@@ -985,11 +985,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                     if (chi2new[i] == 0.0) { continue; }// 
 
-                      if (i % 300 == 0) {
-                      cout << "at entry point" << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     "
-                           << f[i] << endl;
-                      cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]
-                           << endl;
+                      if (i % 150 == 38) {
+                          cout << "at entry point" << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "                           << f[i] << endl;
+                      cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
                     }
   ///cout << "inrtshtj " << endl;
                   //  cout << " in non pml case";
@@ -1040,7 +1038,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             fw_3_atZ[i] = gs_3 * u_3[i]; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
             f[i] = gs * u[i];*/
             fw_2_atZ[i] = (  (g1[i] + g1[i - s1]) * u_2[i]   +    (g1[i + s] + g1[i + s - s1])*u_2[i+s]   )* 0.25;
-            fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s - s2])*u_2[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+            fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s - s2])*u_3[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
             f[i] = gs * u[i];
 
             ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
