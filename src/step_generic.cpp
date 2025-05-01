@@ -985,9 +985,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                     if (chi2new[i] == 0.0) { continue; }// 
 
-                      if (i % 150 == 38) {
-                          cout << "at entry point" << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "                           << f[i] << endl;
-                      cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                      if (i % 150 == 13) {
+                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<< f[i] << endl;
+                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
                     }
   ///cout << "inrtshtj " << endl;
                   //  cout << " in non pml case";
