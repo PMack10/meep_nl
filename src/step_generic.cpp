@@ -732,14 +732,18 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       cout << " in u1u2 as it should be!" << endl;
       if (chi3) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-          realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+         /* realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
-                                  chi3[i]);
+                                  chi3[i]);*/
+          realnum gs = g[i];
+          realnum us = u[i];
+          f[i] = (gs * us);
         } // TODO REPLACE STuFF HERE
+
       }
       
 
