@@ -1018,7 +1018,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
                           cout << "dmp g2  "  << g2[i] << "  "<<  g2[i+s] <<" "<<g2[i - s2]<< "  "<< g2[i+s - s2] << endl;
                           cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
                           
-                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                      cout << "epsilon " u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_2[i -s1] << "   " << u_2[i+s - s1] << endl;
                     }
 
 
