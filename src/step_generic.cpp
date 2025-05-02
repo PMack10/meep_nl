@@ -994,7 +994,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
         PLOOP_OVER_IVECS(gv, is, ie, i) {
                                    
-            if (chi2new[i] == 0.0) { continue; }// 
+           // if (chi2new[i] == 0.0) { continue; }// 
 
             if (i + s >= g1size || i - s2 < 0 || i + (s - s2) >= g1size) {
               std::cerr << "1: g1 out of bounds at i = " << i << "\n";
@@ -1085,7 +1085,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
         PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
           const component fc = Ex;
-                                if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
+                              //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
              //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
                         f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here. //TODO THIS IS ERROR?
@@ -1100,7 +1100,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
             sleep(15);
           }
-                                if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
+                             //   if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
             if (!std::isfinite(fw_3_atZ[i]) ||
                 !std::isfinite(fw_3_atZ[i + s]) ||
                 !std::isfinite(fw_3_atZ[i - s2]) ||
