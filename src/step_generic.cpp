@@ -853,6 +853,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
     KSTRIDE_DEF(dsigw, kw, is, gv); /// Used in DEF_kw.  dsigw, is, and gv come from fn. kw0,
                                     /// skw1/2/3 out. TODO check wrt position
   ///cout << "in Pml NL case 1 " << endl;
+      cout << "IN PML CASE!"<<endl; // in theory it should never enter this case anyway, since the PML should not be located within the chi2 material...
+          sleep(20);
     // TODO implement off-diagonal epsilon terms into NewtonRaphson solver
   ///  if (chi3) { 
       /// Build NR solver into this section here. **should add similar copy to the section further
@@ -891,8 +893,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             ///cout << "Continuing" << endl;
               continue; 
           }
-          cout << "IN PML CASE!"<<endl; // in theory it should never enter this case anyway, since the PML should not be located within the chi2 material...
-          sleep(2);
+        
         realnum gs = g[i]; // dmpZ
         // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...)
         realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX
@@ -1009,13 +1010,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
             realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
-                    //  if (i % 150 == 13) {
-                    //      cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
-                    //      cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
-                    //      cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
-                    //      
-                    ////  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
-                    //}
+                      if (i % 400 == 13) {
+                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
+                          cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
+                          cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
+                          
+                    //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
+                    }
 
 
             /// taking inverse of chi1inverse is easiest way to access epsilon...
@@ -1084,11 +1085,11 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
         // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
         PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
-
+          const component fc = Ex;
                                 if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
 
              //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
-                     //   f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here. //TODO THIS IS ERROR?
+                        f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here. //TODO THIS IS ERROR?
         }
 
         PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
@@ -1110,7 +1111,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
             }
         //    cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
           //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
-                     f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
+                   //  f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
                    }
         //                                   z            x            z     x
         // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
