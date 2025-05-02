@@ -729,8 +729,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 
     if (u1 && u2) { // 3x3 off-diagonal u
    // cout << " shouldn't be in NONpml u1 & u2..." << endl;
-
-      if (chi3) {
+      cout << " in u1u2 as it should be!" << endl;
+      if (chi3) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -787,6 +787,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       if (chi3) { /// TODO CHANGE from chi3 to chi2...
 
         if (g1 && g2) {
+          
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -983,150 +984,165 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
   ///  }
   }
  
-  else {            /////////////// no PML (no fw) ///////////////////
-  ///cout << "in NONPml NL case 1 " << endl;
-    
+  else { /////////////// no PML (no fw) ///////////////////
+
+      if (u1 && u2){
+    /// cout << "in NONPml NL case 1 " << endl;
+
     ///  if (chi3) { /// // TODO delete if
-        
-          /// NR Solver. Similar (simplified as no separate fw and f field updates) to the version above for the PML case(which probably won't be used but who knows))...
-          /// Again, callable by defining the 2nd order NL material with a full 3x3 offdiagonal epsilon as a flag (i.e. u1 && u2 must be non-zero, however they will NOT be used in the calc) and also
-          /// setting chi3 as nonzero as a flag (chi3 will not be used, but setting it to non-zero is a hack to make the code enter this 'if' statement for the NL material
-         
-          ///  fw_2_atZ and fw_3_atZ need to have the same dim as f. If f[i] is i'th Ex field, f_2/3 are the Ex and Ey fields at the SAME location as the Ez field. According
-          /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each other. The Ex and Ey fields at the correct yee cell locations 
-          /// must therefore subsequently calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
-  const size_t g1size = gv.ntot();
-  const size_t g2size = gv.ntot();
-  const size_t fw2zsize = gv.ntot();
-  const size_t fw3zsize = gv.ntot();
 
-        PLOOP_OVER_IVECS(gv, is, ie, i) {
-                                   
-           // if (chi2new[i] == 0.0) { continue; }// 
+    /// NR Solver. Similar (simplified as no separate fw and f field updates) to the version above
+    /// for the PML case(which probably won't be used but who knows))... Again, callable by defining
+    /// the 2nd order NL material with a full 3x3 offdiagonal epsilon as a flag (i.e. u1 && u2 must
+    /// be non-zero, however they will NOT be used in the calc) and also setting chi3 as nonzero as
+    /// a flag (chi3 will not be used, but setting it to non-zero is a hack to make the code enter
+    /// this 'if' statement for the NL material
 
-            if (i + s >= g1size || i - s2 < 0 || i + (s - s2) >= g1size) {
-              std::cerr << "1: g1 out of bounds at i = " << i << "\n";
-              sleep(15);
-            }
-            if (i + s >= g2size || i - s2 < 0 || i + (s - s2) >= g2size) {
-              std::cerr << "1: g2 out of bounds at i = " << i << "\n";
-              sleep(15);
-            }
- 
+    ///  fw_2_atZ and fw_3_atZ need to have the same dim as f. If f[i] is i'th Ex field, f_2/3 are
+    ///  the Ex and Ey fields at the SAME location as the Ez field. According
+    /// to the Yee cell, the Ex and Ey fields are not in fact at the same location as Ez or each
+    /// other. The Ex and Ey fields at the correct yee cell locations must therefore subsequently
+    /// calculated by interpolation (same principle as for gs_2 below), in subsequent ploopoverivecs
+    const size_t g1size = gv.ntot();
+    const size_t g2size = gv.ntot();
+    const size_t fw2zsize = gv.ntot();
+    const size_t fw3zsize = gv.ntot();
 
+    PLOOP_OVER_IVECS(gv, is, ie, i) {
 
-            realnum gs = g[i]; //dmpZ
-          // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
-            realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; //dmpX at Z locations
-            realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
+      // if (chi2new[i] == 0.0) { continue; }//
 
-                      if (i % 400 == 13) {
-                          cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
-                          cout << "dmp g and g1  " << g[i] << "  " << g1[i] << "  "<<  g1[i+s] <<" "<<g1[i - s1]<< "  "<< g1[i+s - s1] << endl;
-                          cout << "dmp g2  "  << g2[i] << "  "<<  g2[i+s] <<" "<<g2[i - s2]<< "  "<< g2[i+s - s2] << endl;
-                          cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
-                          
-                      cout << "epsilon "<< u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_2[i -s1] << "   " << u_2[i+s - s1] << endl;
-                    }
+      if (i + s >= g1size || i - s2 < 0 || i + (s - s2) >= g1size) {
+        std::cerr << "1: g1 out of bounds at i = " << i << "\n";
+        sleep(15);
+      }
+      if (i + s >= g2size || i - s2 < 0 || i + (s - s2) >= g2size) {
+        std::cerr << "1: g2 out of bounds at i = " << i << "\n";
+        sleep(15);
+      }
 
+      realnum gs = g[i]; // dmpZ
+      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
+      realnum gs_2 =
+          (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX at Z locations
+      realnum gs_3 =
+          (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
-            /// taking inverse of chi1inverse is easiest way to access epsilon...
-            //realnum us = 1 / u[i]; 
-            //realnum us_2 = 1 / u_2[i]; 
-            //realnum us_3 = 1 / u_3[i];          
-           
+      /*if (i % 400 == 13) {
+        cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  " << f_3[i] << endl;
+        cout << "dmp g and g1  " << g[i] << "  " << g1[i] << "  " << g1[i + s] << " " << g1[i - s1]
+             << "  " << g1[i + s - s1] << endl;
+        cout << "dmp g2  " << g2[i] << "  " << g2[i + s] << " " << g2[i - s2] << "  "
+             << g2[i + s - s2] << endl;
+        cout << "dmp interp  " << gs_2 << "  " << gs_3 << endl;
 
-            if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
-              cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  "<< u_3[i]<<endl;
-              sleep(5);
+        cout << "epsilon " << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   "
+             << u_2[i - s1] << "   " << u_2[i + s - s1] << endl;
+      }*/
 
-            }
-            realnum us = 1 / u[i]   ; 
-            realnum us_2 = 1 / (   u_2[i]   );
-            realnum us_3 = 1 / u_3[i];
+      /// taking inverse of chi1inverse is easiest way to access epsilon...
+      // realnum us = 1 / u[i];
+      // realnum us_2 = 1 / u_2[i];
+      // realnum us_3 = 1 / u_3[i];
 
-          ///cout << "lgsfdg " << endl;
-          //  cout << "us " << us << " us2 " << us_2 << endl;
-
-            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
-            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X 
-            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
-            Parameters p3 = {gs, us,     0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal (as zinc blende)
-
-            realnum seed1 = f[i];
-            realnum seed2 = fw_2_atZ[i];  
-            realnum seed3 = fw_3_atZ[i];
-
-          /*        cout << "PRENR s1" << endl;
-            cout << seed1 << endl;
-                  cout << " fw_2_atZ[i]" << seed2 << endl;
-            cout << " s3" << seed3 << endl;
-                  cout << " chi2:" << chi2new[i] << endl;
-            cout << "chi3:" << chi3[i] << endl;
-                  cout << " us " << us << endl;
-            cout << " us_2 " << us_2 << endl;
-                  cout << " us_3 " << us_3 << endl;
-                  cout << " gs_2" << gs_2 << endl;*/
-
-           /* fw_2_atZ[i] = gs_2 * u_2[i];
-            fw_3_atZ[i] = gs_3 * u_3[i]; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
-            f[i] = gs * u[i];*/
-            //fw_2_atZ[i] = (  (g1[i] + g1[i - s1]) * u_2[i]   +    (g1[i + s] + g1[i + s - s1])*u_2[i+s]   )* 0.25;
-            //fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s - s2])*u_3[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
-            fw_2_atZ[i] = (  g1[i]* u_2[i]   + g1[i - s1]* u_2[i-s1]    +    g1[i + s]*u_2[i+s] + g1[i + s - s1]*u_2[i+s-s1]   )* 0.25;
-            fw_3_atZ[i] = (  g2[i]*u_3[i] + g2[i - s2] * u_3[i-s2]   +    g2[i + s]*u_3[i+s] + g2[i + s - s2]*u_3[i+s-s2]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
-            f[i] = gs * u[i];
-
-            ///Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
-            /// Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
-        //    runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note fw_2_atZ variable is named 'fw' but is used for 'f' here
-          //  if (i % 300 == 0) {
-            if (isnan(fw_2_atZ[i]) ||  isnan(fw_3_atZ[i]) || isnan(f[i]) ||isinf(fw_2_atZ[i]) ||  isinf(fw_3_atZ[i]) || isinf(f[i]) ){
-        cout << "err " << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
-              cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]<< endl;
+      if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
+        cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  " << u_3[i] << endl;
         sleep(5);
-            }
-   
+      }
+      realnum us = 1 / u[i];
+      realnum us_2 = 1 / (u_2[i]);
+      realnum us_3 = 1 / u_3[i];
 
-        }
+      /// cout << "lgsfdg " << endl;
+      //  cout << "us " << us << " us2 " << us_2 << endl;
 
-        // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and then calculate f_2 and f_3..
-        PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
-          const component fc = Ex;
-                              //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
+      // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
+      Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
+      Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+      Parameters p3 = {gs,  us,  0.0,       0.0, 0.0,
+                       0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal
+                                              // (as zinc blende)
 
-             //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
-                        f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) * 0.25; // interpolation here. //TODO THIS IS ERROR?
-        }
+      realnum seed1 = f[i];
+      realnum seed2 = fw_2_atZ[i];
+      realnum seed3 = fw_3_atZ[i];
 
-        PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
-          if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
-            std::cerr << "1: fw2z out of bounds at i = " << i << "\n";
-            sleep(15);
-          }
-          if (i + s >= fw3zsize || i - s2 < 0 || i + (s - s2) >= fw3zsize) {
-            std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
-            sleep(15);
-          }
-                             //   if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation loops??
-            if (!std::isfinite(fw_3_atZ[i]) ||
-                !std::isfinite(fw_3_atZ[i + s]) ||
-                !std::isfinite(fw_3_atZ[i - s2]) ||
-                !std::isfinite(fw_3_atZ[i + (s - s2)])) {
-                std::cerr << "Bad fw3 value at i = " << i << "\n";
-              sleep(20);
-            }
-        //    cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
-          //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
-                   //  f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]    )*0.25; // interpolation here  //TODO THIS IS ERROR?
-                   }
-        //                                   z            x            z     x
-        // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+      /*        cout << "PRENR s1" << endl;
+        cout << seed1 << endl;
+              cout << " fw_2_atZ[i]" << seed2 << endl;
+        cout << " s3" << seed3 << endl;
+              cout << " chi2:" << chi2new[i] << endl;
+        cout << "chi3:" << chi3[i] << endl;
+              cout << " us " << us << endl;
+        cout << " us_2 " << us_2 << endl;
+              cout << " us_3 " << us_3 << endl;
+              cout << " gs_2" << gs_2 << endl;*/
 
-      
+      /* fw_2_atZ[i] = gs_2 * u_2[i];
+       fw_3_atZ[i] = gs_3 * u_3[i]; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+       f[i] = gs * u[i];*/
+      // fw_2_atZ[i] = (  (g1[i] + g1[i - s1]) * u_2[i]   +    (g1[i + s] + g1[i + s - s1])*u_2[i+s]
+      // )* 0.25; fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s -
+      // s2])*u_3[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+      fw_2_atZ[i] = (g1[i] * u_2[i] + g1[i - s1] * u_2[i - s1] + g1[i + s] * u_2[i + s] +
+                     g1[i + s - s1] * u_2[i + s - s1]) *
+                    0.25;
+      fw_3_atZ[i] = (g2[i] * u_3[i] + g2[i - s2] * u_3[i - s2] + g2[i + s] * u_3[i + s] +
+                     g2[i + s - s2] * u_3[i + s - s2]) *
+                    0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+      f[i] = gs * u[i];
 
-     /// }
+      /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
+      ///  Seeded with previous field vals. Passing in field array pointers to be assigned new vals.
+      //    runNR(seed2, seed3, seed1, &fw_2_atZ[i], &fw_3_atZ[i], &f[i], p1, p2, p3); // note
+      //    fw_2_atZ variable is named 'fw' but is used for 'f' here
+      //  if (i % 300 == 0) {
+      if (isnan(fw_2_atZ[i]) || isnan(fw_3_atZ[i]) || isnan(f[i]) || isinf(fw_2_atZ[i]) ||
+          isinf(fw_3_atZ[i]) || isinf(f[i])) {
+        cout << "err " << fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
+        cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i] << endl;
+        sleep(5);
+      }
+    }
 
+    // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and
+    // then calculate f_2 and f_3..
+    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
+      const component fc = Ex;
+      //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation
+      //  loops??
+
+      //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
+      f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
+               0.25; // interpolation here. //TODO THIS IS ERROR?
+    }
+
+    PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
+      if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
+        std::cerr << "1: fw2z out of bounds at i = " << i << "\n";
+        sleep(15);
+      }
+      if (i + s >= fw3zsize || i - s2 < 0 || i + (s - s2) >= fw3zsize) {
+        std::cerr << "1: fw3z out of bounds at i = " << i << "\n";
+        sleep(15);
+      }
+      //   if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation
+      //   loops??
+      if (!std::isfinite(fw_3_atZ[i]) || !std::isfinite(fw_3_atZ[i + s]) ||
+          !std::isfinite(fw_3_atZ[i - s2]) || !std::isfinite(fw_3_atZ[i + (s - s2)])) {
+        std::cerr << "Bad fw3 value at i = " << i << "\n";
+        sleep(20);
+      }
+      //    cout << "&fw_3_atZ[i] address = " << &fw_3_atZ[i] << "\n";
+      //(Gets 'Ey fields at y cell locations' from 'Ey fields at Z cell locations')
+      //  f_3[i] = (   fw_3_atZ[i] + fw_3_atZ[i + s] + fw_3_atZ[i - s2] + fw_3_atZ[i + (s - s2)]
+      //  )*0.25; // interpolation here  //TODO THIS IS ERROR?
+    }
+    //                                   z            x            z     x
+    // realnum g1sZatX = g1Z[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+
+    /// }
+  }
   }
 }
 
