@@ -1012,7 +1012,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
                       if (i % 400 == 13) {
                           cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  "<<  f_3[i]  << endl;
-                          cout << "at entry dmp  " << g[i] << "  " << g1[i] << "  "<<  g2[i]  << endl;
+                          cout << "dmp g and g1  " << g[i] << "  " << g1[i] << "  "<<  g1[i+s] <<" "<<g1[i - s1]<< "  "<< g1[i+s - s1] << endl;
+                          cout << "dmp g2  "  << g2[i] << "  "<<  g2[i+s] <<" "<<g2[i - s2]<< "  "<< g2[i+s - s2] << endl;
                           cout << "dmp interp  " << gs_2 << "  " << gs_3  << endl;
                           
                     //  cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]                           << endl;
@@ -1075,11 +1076,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
               cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i]<< endl;
         sleep(5);
             }
-           /*   if (i % 500 == 0) {
-        cout<< "general print"<< fw_2_atZ[i] << "    " << fw_3_atZ[i] << "     " << f[i] << endl;
-        cout << u[i] << "    " << u_2[i] << "     " << u_2[i + s] << "   " << u_3[i] << endl;
-
-            }*/
+   
 
         }
 
