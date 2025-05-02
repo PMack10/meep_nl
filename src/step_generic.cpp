@@ -547,6 +547,8 @@ inline realnum calc_nonlinear_u(const realnum Dsqr, const realnum Di, const real
                                 const realnum chi2, const realnum chi3) {
   realnum c2 = Di * chi2 * (chi1inv * chi1inv);
   realnum c3 = Dsqr * chi3 * (chi1inv * chi1inv * chi1inv);
+  cout << "shuoldn't be here pade!" endl;
+  sleep(10);
   return (1 + c2 + 2 * c3) / (1 + 2 * c2 + 3 * c3);
 }
 
