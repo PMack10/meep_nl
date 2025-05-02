@@ -167,21 +167,24 @@ fields_chunk::~fields_chunk() {
   DOCMP2 FOR_H_AND_B(hc, bc) {
     if (f[hc][cmp] == f[bc][cmp]) f[bc][cmp] = NULL;
   }
-  DOCMP2 FOR_COMPONENTS(c) {
-    delete[] f[c][cmp];
-    delete[] f_u[c][cmp];
-    delete[] f_w[c][cmp];
-    delete[] f_cond[c][cmp];
-    delete[] f_bfast[c][cmp];
-    delete[] f_minus_p[c][cmp];
-    delete[] f_w_prev[c][cmp];
-    delete[] f_backup[c][cmp];
-    delete[] f_u_backup[c][cmp];
-    delete[] f_w_backup[c][cmp];
-    delete[] f_cond_backup[c][cmp];
-    delete[] f_bfast_backup[c][cmp];
-  }
-  delete[] fTempNlFieldsForInterpolation;  // destruct the arrays made for NL field storage... // TODO compiler threw a warning on this for some reason...
+  DOCMP2 {
+    FOR_COMPONENTS(c) {
+      delete[] f[c][cmp];
+      delete[] f_u[c][cmp];
+      delete[] f_w[c][cmp];
+      delete[] f_cond[c][cmp];
+      delete[] f_bfast[c][cmp];
+      delete[] f_minus_p[c][cmp];
+      delete[] f_w_prev[c][cmp];
+      delete[] f_backup[c][cmp];
+      delete[] f_u_backup[c][cmp];
+      delete[] f_w_backup[c][cmp];
+      delete[] f_cond_backup[c][cmp];
+      delete[] f_bfast_backup[c][cmp];
+    }
+    delete[] fTempNlFieldsForInterpolation[0][cmp]; // destruct the arrays made for NL field storage...
+    delete[] fTempNlFieldsForInterpolation[1][cmp]; // destruct the arrays made for NL field storage...
+                                        }
   delete[] f_rderiv_int;
   while (dft_chunks) {
     dft_chunk *nxt = dft_chunks->next_in_chunk;

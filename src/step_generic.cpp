@@ -603,7 +603,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
   ///cout << "in linear loop PML" << endl;
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
+      cout << " shouldn't be in pml u1&u2.." << endl;
       if (chi3) {
+
+         cout << " shouldn't be in pml chi3..." << endl;
         //////////////////// MOST GENERAL CASE //////////////////////
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -631,6 +634,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
+      cout << " shouldn't be in pml u1..." << endl;
+
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -659,6 +664,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
     else { // diagonal u
       if (chi3) {
+        cout << " shouldn't be in pml chi3... 2" << endl;
+
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -697,6 +704,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
+
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -720,7 +728,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
   ///cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
-      ///cout << "at chi3" << endl;
+   // cout << " shouldn't be in NONpml u1 & u2..." << endl;
+
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -730,7 +739,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
                                   chi3[i]);
-        }
+        } // TODO REPLACE STuFF HERE
       }
       
 
@@ -745,6 +754,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
     else if (u1) { // 2x2 off-diagonal u
       ///cout << "at chi3 u1" << endl;
+      cout << " shouldn't be in NONpml u1..." << endl;
 
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -774,8 +784,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     else { // diagonal u
       ///cout << "at chi3 diag " << endl;
 
-      if (chi3) {
-        ///cout << "rzjrejz " << endl;
+      if (chi3) { /// TODO CHANGE from chi3 to chi2...
 
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -788,7 +797,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-          ///cout << "ahrewjr " << endl;
 
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
