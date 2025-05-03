@@ -732,18 +732,17 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       cout << " in u1u2 as it should be!" << endl;
       if (chi3) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-         /* realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+          realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
           realnum gs = g[i];
           realnum us = u[i];
-          f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
+       /*   f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
                                   chi3[i]);*/
-          realnum gs = g[i];
-          realnum us = u[i];
-          f[i] = (gs * us);
-        } // TODO REPLACE STuFF HERE
 
+          f[i] = (gs * us);
+
+        } // TODO REPLACE STuFF HERE
       }
       
 
@@ -990,7 +989,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
  
   else { /////////////// no PML (no fw) ///////////////////
 
-      if (u1 && u2){
+      if (true){ ///TODO skipping this section for now...
     /// cout << "in NONPml NL case 1 " << endl;
 
     ///  if (chi3) { /// // TODO delete if
@@ -1027,10 +1026,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
       realnum gs = g[i]; // dmpZ
       // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
-      realnum gs_2 =
-          (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX at Z locations
-      realnum gs_3 =
-          (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
+      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpX at Z locations
+      realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpY at Z locations
 
       /*if (i % 400 == 13) {
         cout << "at entry  " << fw_2_atZ[i] << "  " << fw_3_atZ[i] << "  " << f_3[i] << endl;
@@ -1111,11 +1108,11 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
 
     // now do the other two PLOOPs to interpolate the X and Y fields to their correct positions, and
     // then calculate f_2 and f_3..
-    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
       const component fc = Ex;
+    PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
       //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation
       //  loops??
-
+      cout << "strides ex " << s << "  " << s1 << "  " << is_2 << endl;
       //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
       f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
                0.25; // interpolation here. //TODO THIS IS ERROR?
