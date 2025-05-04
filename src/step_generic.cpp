@@ -729,7 +729,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 
     if (u1 && u2) { // 3x3 off-diagonal u
    // cout << " shouldn't be in NONpml u1 & u2..." << endl;
-      cout << " in u1u2 as it should be!" << endl;
+    //  cout << " in u1u2 as it should be!" << endl;
       if (chi3) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -1117,7 +1117,8 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
  //  cellwidth = 2.55
  //  length = 9.75
  // resolution = 58
- // 
+ 
+
       //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
       f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
                0.25; // interpolation here. //TODO THIS IS ERROR?
