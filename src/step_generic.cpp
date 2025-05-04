@@ -1086,11 +1086,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       // )* 0.25; fw_3_atZ[i] = (  (g2[i] + g2[i - s2]) * u_3[i]   +    (g2[i + s] + g2[i + s -
       // s2])*u_3[i+s]   )* 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
       fw_2_atZ[i] = (g1[i] * u_2[i] + g1[i - s1] * u_2[i - s1] + g1[i + s] * u_2[i + s] +
-                     g1[i + s - s1] * u_2[i + s - s1]) *
-                    0.25;
+                     g1[i + s - s1] * u_2[i + s - s1]) * 0.25;
       fw_3_atZ[i] = (g2[i] * u_3[i] + g2[i - s2] * u_3[i - s2] + g2[i + s] * u_3[i + s] +
-                     g2[i + s - s2] * u_3[i + s - s2]) *
-                    0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
+                     g2[i + s - s2] * u_3[i + s - s2]) * 0.25; /// TODO THIS IS JUST A CHECK TEMPORARIOLY
       f[i] = gs * u[i];
 
       /// Newton Raphson for calculating Ez, Ex and Ey fields, (AT Z LOCATIONS):
@@ -1113,12 +1111,14 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation
       //  loops??
    
-      cout << "strides ex " << (int)s << "  " << (int)s1 << "  " << (is_2).yucky_val(0) << "  "
-           << (is_2).yucky_val(1) << "  " << (is_2).yucky_val(2) << endl;
+  //    cout << "strides ex " << (int)s << "  " << (int)s1 << "  " << (is_2).yucky_val(0) << "  "
+    //       << (is_2).yucky_val(1) << "  " << (is_2).yucky_val(2) << endl;
       //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
       f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
                0.25; // interpolation here. //TODO THIS IS ERROR?
     }
+
+ //   1, 14025, [- 1, 0, -272], 
 
     PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
       if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
