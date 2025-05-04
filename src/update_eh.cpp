@@ -236,7 +236,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           if (f[ec][cmp] != f[dc][cmp]) {
          ///   cout << "Doing linear pre step call 2"  << endl;
 
-                cout << "strides ec: " << ec << " s " << (int)s << " s1 " << (int)s_1 << "  s2 " << s_2
+                cout << "strides ec: " << ec << " s " << (int)s_ec << " s1 " << (int)s_1 << "  s2 " << s_2
               << "  little corner: [" << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(0) << ", "
               << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(1) << ", "
               << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(2) << "]" << endl;
