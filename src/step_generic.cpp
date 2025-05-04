@@ -1113,12 +1113,16 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
    
   //    cout << "strides ex " << (int)s << "  " << (int)s1 << "  " << (is_2).yucky_val(0) << "  "
     //       << (is_2).yucky_val(1) << "  " << (is_2).yucky_val(2) << endl;
+ //   1, 14025, [- 1, 0, -272], 
+ //  cellwidth = 2.55
+ //  length = 9.75
+ // resolution = 58
+ // 
       //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
       f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
                0.25; // interpolation here. //TODO THIS IS ERROR?
     }
 
- //   1, 14025, [- 1, 0, -272], 
 
     PLOOP_OVER_IVECS(gv, is_3, ie, i) { /// Round three for interpolating Y
       if (i + s >= fw2zsize || i - s2 < 0 || i + (s - s2) >= fw2zsize) {
