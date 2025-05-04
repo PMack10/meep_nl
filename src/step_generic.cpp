@@ -1112,7 +1112,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
     PLOOP_OVER_IVECS(gv, is_2, ie, i) { /// Round two for interpolating X
       //  if (chi2new[i] == 0.0) { continue; }// TODO should this be in these two interpolation
       //  loops??
-      cout << "strides ex " << (int)s << "  " << (int)s1 << "  " << (int)is_2 << endl;
+   
+      cout << "strides ex " << (int)s << "  " << (int)s1 << "  " << (int)is_2[0] << "  "
+           << (int)is_2[1] << "  " << (int)is_2[2] << endl;
       //(Gets 'Ex fields at X cell locations' from 'Ex fields at Z cell locations')
       f_2[i] = (fw_2_atZ[i] + fw_2_atZ[i + s] + fw_2_atZ[i - s1] + fw_2_atZ[i + (s - s1)]) *
                0.25; // interpolation here. //TODO THIS IS ERROR?
