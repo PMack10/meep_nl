@@ -237,21 +237,29 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           if (f[ec][cmp] != f[dc][cmp]) {
 
          ///   cout << "Doing linear pre step call 2"  << endl;
-           // if (ft == E_stuff && ec == 0) {
-           //cout << "strides ec: " << ec << " i: " << int(i) << " s " << (int)s_ec
-           //     << " s1 " << (int)s_1 << "  s2 " << s_2 << "  little corner: ["
-           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(0) << ", "
-           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(1) << ", "
-           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(2) << "]" << endl;
-           // }//1.68966 x 1.68966 x 5.44828 with resolution 58
+            if (ft == E_stuff && ec == 0) {
+           cout << "strides ec: " << ec << " i: " << int(i) << " s " << (int)s_ec
+                << " s1 " << (int)s_1 << "  s2 " << s_2 << "  little corner: ["
+                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(0) << ", "
+                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(1) << ", "
+                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(2) << "]" << endl;
+            }//1.68966 x 1.68966 x 5.44828 with resolution 58
 
             STEP_UPDATE_EDHB(
                 f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
                 gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
                 s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
-                dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2,
-                NULL,NULL, /// CHI2 and chi3 set to NULL here as will be applied in subsequent STEP_UPDATE_EDHB_NL. s->chi2[ec], s->chi3[ec], 
-                f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+                dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2, s->chi2[ec],
+                NULL, f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
+
+
+            //STEP_UPDATE_EDHB( /// old one for when doing separate NR loop
+            //    f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
+            //    gvs_eh[ft][i].big_corner(), dmp[dc][cmp], dmp[dc_1][cmp], dmp[dc_2][cmp],
+            //    s->chi1inv[ec][d_ec], dmp[dc_1][cmp] ? s->chi1inv[ec][d_1] : NULL,
+            //    dmp[dc_2][cmp] ? s->chi1inv[ec][d_2] : NULL, s_ec, s_1, s_2,
+            //    NULL,NULL, /// CHI2 and chi3 set to NULL here as will be applied in subsequent STEP_UPDATE_EDHB_NL. s->chi2[ec], s->chi3[ec], 
+            //    f_w[ec][cmp], dsigw, s->sig[dsigw], s->kap[dsigw]);
 
             // if (gv.dim == Dcyl) {
             //  ivec is = gvs_eh[ft][i].little_owned_corner(ec);

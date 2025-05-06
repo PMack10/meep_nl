@@ -574,7 +574,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                       const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u1,
                       const RPR u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2, const RPR chi2,
                       const RPR chi3, RPR fw, direction dsigw, const RPR sigw, const RPR kapw) {
-  (void)fc; // currently unused
+ /// (void)fc; // currently unused
   if (!f) return;
   // f= E field,  fc = field component (ec).
   // g, g1 g2 are the D components (Dx, Dy..) of the fminusp data
@@ -728,21 +728,70 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
   ///cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
-   // cout << " shouldn't be in NONpml u1 & u2..." << endl;
     //  cout << " in u1u2 as it should be!" << endl;
-      if (chi3) { /// TODO CHANGE TO CHI2
+      if (chi2) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-          realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+          /*   realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
           realnum gs = g[i];
           realnum us = u[i];
-       /*   f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
+          f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
                                   chi3[i]);*/
 
-          f[i] = (gs * us);
 
-        } // TODO REPLACE STuFF HERE
+    // NEW STUFF Here \/ \/
+             
+      realnum gs = g[i]; // dmpZ
+      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
+      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpY at X locations (when fc == ex)
+      realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpZ at X locations
+
+      if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
+            cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  " << u_3[i] << endl;
+            sleep(5);
+          }
+
+          /// taking inverse of chi1inverse is easiest way to access epsilon...
+          realnum us = 1 / u[i];
+          realnum us_2 = 1 / (u_2[i]);
+          realnum us_3 = 1 / u_3[i];
+          realnum dummyF1 = 0.0;
+          realnum dummyF2 = 0.0;
+
+          if (fc == 0) { // Ex
+            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
+            Parameters p1 = {gs, us, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
+            Parameters p2 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+            Parameters p3 = {gs_3,  us_3,  0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z.
+            realnum seed1 = f[i];
+            realnum seed2 = gs_2 * u_2[i];
+            realnum seed3 = gs_3 * u_3[i];
+            runNR(seed1, seed2, seed3, &f[i], &dummyF1, &dummyF2, p1, p2, p3);
+          }
+          else if (fc == 1) { //Ey
+            Parameters p1 = {gs_3, us_3, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0};     // X
+            Parameters p2 = {gs, us, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+            Parameters p3 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z.
+            realnum seed1 = gs_3 * u_3[i];
+            realnum seed2 = f[i];
+            realnum seed3 = gs_2 * u_2[i];
+            runNR(seed1, seed2, seed3, &dummyF1, &f[i], &dummyF2, p1, p2, p3);
+          }
+          else if (fc == 4) { //Ez
+            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
+            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
+            Parameters p3 = {gs, us, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z.
+            realnum seed1 = gs_2 * u_2[i];
+            realnum seed2 = gs_3 * u_3[i];
+            realnum seed3 = f[i];
+            runNR(seed1, seed2, seed3, &dummyF1, &dummyF1, &f[i], p1, p2, p3);
+          }
+          else { cout << "hmm what?" << endl;
+          }
+          // TODO REPLACE STuFF HERE ^^^^^^^^^^
+
+        } 
       }
       
 
@@ -1040,15 +1089,13 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
              << u_2[i - s1] << "   " << u_2[i + s - s1] << endl;
       }*/
 
-      /// taking inverse of chi1inverse is easiest way to access epsilon...
-      // realnum us = 1 / u[i];
-      // realnum us_2 = 1 / u_2[i];
-      // realnum us_3 = 1 / u_3[i];
 
       if (u[i] == 0 || u_2[i] == 0 || u_3[i] == 0) {
         cout << "u is zero!! " << u[i] << "  " << u_2[i] << "  " << u_3[i] << endl;
         sleep(5);
       }
+
+      /// taking inverse of chi1inverse is easiest way to access epsilon...
       realnum us = 1 / u[i];
       realnum us_2 = 1 / (u_2[i]);
       realnum us_3 = 1 / u_3[i];
@@ -1059,8 +1106,7 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
       // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
       Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new[i], 0.0, 0.0}; // X
       Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new[i], 0.0}; // Y
-      Parameters p3 = {gs,  us,  0.0,       0.0, 0.0,
-                       0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal
+      Parameters p3 = {gs,  us,  0.0, 0.0, 0.0, 0.0, 0.0, chi2new[i]}; // Z. currently using all chi2 tensor components equal
                                               // (as zinc blende)
 
       realnum seed1 = f[i];
