@@ -165,6 +165,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
 
   /// ############### THIS is the loop that needs modifying for Newton Raphson implementation
   for (size_t i = 0; i < gvs_eh[ft].size(); ++i) {
+    cout << " i: " << int(i) << endl;
     DOCMP { /// added { here to split the two loop macros
       /// ADDED variable declarations here (and placeholder inits), so they are in-scope both in AND
       /// after FOR_FT_COMPONENTS
