@@ -726,10 +726,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-  ///cout << "in linear loop Non pml" << endl;
+  cout << "in linear loop Non pml" << endl;
 
     if (u1 && u2) { // 3x3 off-diagonal u
-    //  cout << " in u1u2 as it should be!" << endl;
+     cout << " in u1u2 as it should be!" << endl;
       if (chi2) { /// TODO CHANGE TO CHI2
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           /*   realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
