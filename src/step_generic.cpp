@@ -989,10 +989,9 @@ void step_update_EDHB_NL(RPR f, RPR f_2, RPR f_3, component fc, const grid_volum
  
   else { /////////////// no PML (no fw) ///////////////////
 
-      if (true){ ///TODO skipping this section for now...
-    /// cout << "in NONPml NL case 1 " << endl;
-
+      if (false){ ///TODO skipping this section for now...
     ///  if (chi3) { /// // TODO delete if
+    /// cout << "in NONPml NL case 1 " << endl;
 
     /// NR Solver. Similar (simplified as no separate fw and f field updates) to the version above
     /// for the PML case(which probably won't be used but who knows))... Again, callable by defining
