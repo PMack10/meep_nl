@@ -309,6 +309,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
               _seed3 = -seed3 * seedMax;
               break;
             default:
+              cout << "NR Random Seeds !" << endl;
               _seed1 = getRandomNumber();
               _seed2 = getRandomNumber();
               _seed3 = getRandomNumber();
