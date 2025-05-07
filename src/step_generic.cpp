@@ -569,7 +569,10 @@ inline realnum calc_nonlinear_u(const realnum Dsqr, const realnum Di, const real
 
 */
 
-/// TODO add old macro and fn defs for this
+
+
+
+
 void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is, const ivec ie,
                       const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u1,
                       const RPR u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2, const RPR chi2,
@@ -589,25 +592,18 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     SWAP(const RPR, u1, u2);
     SWAP(ptrdiff_t, s1, s2);
   }
-///cout << "in linear loop  "  << endl;
+
 // stable averaging of offdiagonal components
 #define OFFDIAG(u, g, sx)                                                                          \
   (0.25 * ((g[i] + g[i - sx]) * u[i] + (g[i + s] + g[(i + s) - sx]) * u[i + s]))
 
   /* As with step_curl, these loops are all essentially copies
      of the "MOST GENERAL CASE" loop with various terms thrown out. */
-  if (chi3) { cout << "IN CHI3!! " << endl;
-  }
 
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
-  ///cout << "in linear loop PML" << endl;
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
-      cout << " shouldn't be in pml u1&u2.." << endl;
-      sleep(20);
       if (chi3) {
-
-         cout << " shouldn't be in pml chi3..." << endl;
         //////////////////// MOST GENERAL CASE //////////////////////
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -635,8 +631,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      cout << " shouldn't be in pml u1..." << endl;
-
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -665,8 +659,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
     else { // diagonal u
       if (chi3) {
-        cout << " shouldn't be in pml chi3... 2" << endl;
-
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -705,7 +697,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
-
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -726,79 +717,19 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-  cout << "in linear loop Non pml" << endl;
-
     if (u1 && u2) { // 3x3 off-diagonal u
-     cout << " in u1u2 as it should be!" << endl;
-      if (chi2) { /// TODO CHANGE TO CHI2
+      if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-          /*   realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+          realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
-                                  chi3[i]);*/
-
-
-    // NEW STUFF Here \/ \/
-             
-      realnum gs = g[i]; // dmpZ
-      // avg orthogonal D-P fields over adjacent cells (see yee cell diag to understand why...):
-      realnum gs_2 = (g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)]) * 0.25; // dmpY at X locations (when fc == ex)
-      realnum gs_3 = (g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)]) * 0.25; // dmpZ at X locations
-
-      if (u[i] == 0 || u1[i] == 0 || u2[i] == 0) {
-            cout << "u is zero!! " << u[i] << "  " << u1[i] << "  " << u2[i] << endl;
-            sleep(5);
-          }
-
-          /// taking inverse of chi1inverse is easiest way to access epsilon...
-          realnum us = 1 / u[i];
-          realnum us_2 = 1 / (u1[i]);
-          realnum us_3 = 1 / (u2[i]);
-          realnum dummyF1 = 0.0;
-          realnum dummyF2 = 0.0;
-          realnum chi2new = chi2[i];
-
-          if (fc == 0) { // Ex
-            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
-            Parameters p1 = {gs, us, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
-            Parameters p2 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0};    // Y
-            Parameters p3 = {gs_3,  us_3,  0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
-            realnum seed1 = f[i];
-            realnum seed2 = gs_2 * u1[i];
-            realnum seed3 = gs_3 * u2[i];
-            runNR(seed1, seed2, seed3, &f[i], &dummyF1, &dummyF2, p1, p2, p3);
-          }
-          else if (fc == 1) { //Ey
-            Parameters p1 = {gs_3, us_3, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0};     // X
-            Parameters p2 = {gs, us, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
-            Parameters p3 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
-            realnum seed1 = gs_3 * u2[i];
-            realnum seed2 = f[i];
-            realnum seed3 = gs_2 * u1[i];
-            runNR(seed1, seed2, seed3, &dummyF1, &f[i], &dummyF2, p1, p2, p3);
-          }
-          else if (fc == 4) { //Ez
-            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
-            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
-            Parameters p3 = {gs, us, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
-            realnum seed1 = gs_2 * u1[i];
-            realnum seed2 = gs_3 * u2[i];
-            realnum seed3 = f[i];
-            runNR(seed1, seed2, seed3, &dummyF1, &dummyF1, &f[i], p1, p2, p3);
-          }
-          else { cout << "hmm what?" << endl;
-          }
-          // TODO REPLACE STuFF HERE ^^^^^^^^^^
-
-        } 
+                                  chi3[i]);
+        }
       }
-      
-
       else {
-        cout << "at chi3 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -807,9 +738,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      cout << "at chi3 u1" << endl;
-      cout << " shouldn't be in NONpml u1..." << endl;
-
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -819,10 +747,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
         }
       }
-      
-
       else {
-        cout << "at chi3 u1 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -831,17 +756,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u2) { // 2x2 off-diagonal u
-      cout << "abrte" << endl;
-
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      cout << "at chi3 diag " << endl;
-
-      if (chi3) { /// TODO CHANGE from chi3 to chi2...
-        cout << "at chi3 diag 1 " << endl;
+      if (chi3) {
         if (g1 && g2) {
-          cout << "at chi3 diag 2" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -852,7 +771,6 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-          cout << "at chi3 diag 3 " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
@@ -861,14 +779,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                    calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
           }
         }
-        else if (g2) {
-          cout << "ykdrs " << endl;
-
-          meep::abort("bug - didn't swap off-diagonal terms!?");
-        }
-
+        else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
         else {
-        cout << "lydtser " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
@@ -876,27 +788,29 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
       }
-
       else if (u) {
-        cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-       //   ///cout << u[i] << "  " << g[i] << endl;
-
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us);
         }
       }
-      else {
-        cout << " SHOULDN'T be here! "<< u[0] << endl;
-        PLOOP_OVER_IVECS(gv, is, ie, i)
-        {
-        f[i] = g[i];
-      }
-    }
+      else
+        PLOOP_OVER_IVECS(gv, is, ie, i) { f[i] = g[i]; }
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 /// TODO rename macro and fn defs for this
