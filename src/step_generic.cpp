@@ -764,7 +764,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i], chi3[i]);*/
           }
           else {
-            cout << "NR" << endl;
+         //   cout << "NR" << endl;
             // if chi2 == 0, all three eps rqd, else, ideally at least two eps rqd although
             // sometimes 1 may be enough
             if (fc == 0) { // Ex
