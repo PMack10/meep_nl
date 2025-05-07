@@ -156,12 +156,15 @@ vector<double> equations(double x, double y, double z, const Parameters &p1, con
 
 vector<vector<double> > jacobian(double x, double y, double z, const Parameters &p1,
                                  const Parameters &p2, const Parameters &p3) {
-  return {{-p1.B - 2 * p1.C * x - p1.G * z - p1.H * y, -2 * p1.D * y - p1.F * z - p1.H * x,
-           -2 * p1.E * z - p1.F * y - p1.G * x},
-          {-2 * p2.C * x - p2.G * z - p2.H * y, -p2.B - 2 * p2.D * y - p2.F * z - p2.H * x,
-           -2 * p2.E * z - p2.F * y - p2.G * x},
-          {-2 * p3.C * x - p3.G * z - p3.H * y, -2 * p3.D * y - p3.F * z - p3.H * x,
-           -p3.B - 2 * p3.E * z - p3.F * y - p3.G * x}};
+  return {{-p1.B - p1.G * z - p1.H * y,  - p1.F * z - p1.H * x, - p1.F * y - p1.G * x},
+          {- p2.G * z - p2.H * y, -p2.B - p2.F * z - p2.H * x, - p2.F * y - p2.G * x},
+          {- p3.G * z - p3.H * y, - p3.F * z - p3.H * x, -p3.B - p3.F * y - p3.G * x}};//TODO, deleted the n^2 terms for efficiency (as not relevant for 43m)
+  //return {{-p1.B - 2 * p1.C * x - p1.G * z - p1.H * y, -2 * p1.D * y - p1.F * z - p1.H * x,
+  //         -2 * p1.E * z - p1.F * y - p1.G * x},
+  //        {-2 * p2.C * x - p2.G * z - p2.H * y, -p2.B - 2 * p2.D * y - p2.F * z - p2.H * x,
+  //         -2 * p2.E * z - p2.F * y - p2.G * x},
+  //        {-2 * p3.C * x - p3.G * z - p3.H * y, -2 * p3.D * y - p3.F * z - p3.H * x,
+  //         -p3.B - 2 * p3.E * z - p3.F * y - p3.G * x}};
 }
 
 vector<double> solveLinearSystem(const vector<vector<double> > &J, const vector<double> &F) {
@@ -240,8 +243,8 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       for (int i = 0, imax = 100; i < imax; ++i) {
         if (newtonRaphson(_seed1, _seed2, _seed3, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
           //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
-     /*     cout << "Converged " << i << endl;
-          cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
+       cout << "Converged " << i << endl;
+        /*     cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
           cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
           cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
@@ -251,7 +254,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
           break;
         }
         else {
-          //cout << "NR didn't converge: " << i << endl;
+          cout << "NR didn't converge: " << i << endl;
           //cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
           //cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
           //     << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
