@@ -747,8 +747,8 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
 
           /// taking inverse of chi1inverse is easiest way to access epsilon...
           realnum us = 1 / u[i];
-          realnum us_2 = us // 1 / (u1[i]);
-          realnum us_3 = us //1 / (u2[i]);  (making all eps values equal for now, can change later)
+          realnum us_2 = us; // 1 / (u1[i]);
+          realnum us_3 = us; //1 / (u2[i]);  (making all eps values equal for now, can change later)
           realnum dummyF1 = 0.0;
           realnum dummyF2 = 0.0;
           realnum chi2new = chi2[i];
