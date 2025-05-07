@@ -118,7 +118,7 @@ bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
     if (fabs(delta[0]) < tol1 && fabs(delta[1]) < tol2 && fabs(delta[2]) < tol3) {
       //   cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
       //   cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
-      fieldCheckPercent = fmax(fabs(x), fabs(y), fabs(z)) * FIELDCHECKPERCENT;
+      double fieldCheckPercent = fmax(fabs(x), fabs(y), fabs(z)) * FIELDCHECKPERCENT;
       vector<double> fCheck = equations(
           x, y, z, p1, p2, p3); // call eqns here with the final values to verify... (because
                                 // current stopping condition is just NR algo step delta)
