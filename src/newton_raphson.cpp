@@ -118,12 +118,13 @@ bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
     if (fabs(delta[0]) < tol1 && fabs(delta[1]) < tol2 && fabs(delta[2]) < tol3) {
       //   cout << "Converged after " << iter + 1 << " iterations:   "; //.\n";
       //   cout << "x = " << x << ", y = " << y << ", z = " << z << "\n";
-      double fieldCheckPercent = fmax(fabs(x), fmax(fabs(y), fabs(z))) * FIELDCHECKPERCENT;
+    //  double fieldCheckPercent = fmax(fabs(x), fmax(fabs(y), fabs(z))) * FIELDCHECKPERCENT;
+      double ax = std::abs(x), ay = std::abs(y), az = std::abs(z);
+      double fieldCheckPercent = (ax > ay ? (ax > az ? ax : az) : (ay > az ? ay : az)) * FIELDCHECKPERCENT;
       vector<double> fCheck = equations(
           x, y, z, p1, p2, p3); // call eqns here with the final values to verify... (because
                                 // current stopping condition is just NR algo step delta)
-      if (fCheck[0] <= fieldCheckPercent && fCheck[1] <= fieldCheckPercent &&
-          fCheck[2] <= fieldCheckPercent) {
+      if (fCheck[0] <= fieldCheckPercent && fCheck[1] <= fieldCheckPercent && fCheck[2] <= fieldCheckPercent) {
         *fw = x; /// Update E field values!
         *fw_2 = y;
         *fw_3 = z;
@@ -131,6 +132,7 @@ bool newtonRaphson(realnum x, realnum y, realnum z, const Parameters &p1,
       }
       else {
         cout << "Failed field tolerance check" << endl;
+        cout << "x, y, z: " << x << " " << y << " " << z << endl;
        // sleep(10);
       }
     }
