@@ -723,14 +723,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
      if (chi3) {
         cout << "awfawe" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
-          /*   realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
-                 realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
-                 realnum gs = g[i];
-                 realnum us = u[i];
-                 f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
-                        calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us,
-             chi2[i], chi3[i]);*/
-
+      
           // NEW STUFF Here \/ \/
 
           realnum gs = g[i]; // dmpZ
@@ -745,6 +738,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
             sleep(5);
           }
 
+           
           /// taking inverse of chi1inverse is easiest way to access epsilon...
           realnum us = 1 / u[i];
           realnum us_2 = us; // 1 / (u1[i]);
@@ -753,37 +747,56 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           realnum dummyF2 = 0.0;
           realnum chi2new = chi2[i];
 
-          if (fc == 0) { // Ex
-            // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
-            Parameters p1 = {gs, us, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0};     // X
-            Parameters p2 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
-            Parameters p3 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
-            realnum seed1 = f[i];
-            realnum seed2 = gs_2 * u[i];// * u1[i];
-            realnum seed3 = gs_3 * u[i]; //  * u2[i];
-            runNR(seed1, seed2, seed3, &f[i], &dummyF1, &dummyF2, p1, p2, p3);
+          int zeroEpsCounter = 0;
+          if (u[i] == 0)  zeroEpsCounter += 1; //TODO once everything is working, need to change u1, u2 to u_1 u_2 (and add as new params to the fn) so can have anisotropic material...
+          if (u1[i] == 0) zeroEpsCounter += 1;
+          if (u2[i] == 0) zeroEpsCounter += 1;
+          if (chi2new == 0 || zeroEpsCounter < 2) {// Then do normal thing (without off diagonals or chi's) and not NR
+            realnum gs = g[i];
+            realnum us = u[i];
+            f[i] = (gs * us);
+    /*       realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
+           realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
+           realnum gs = g[i];
+           realnum us = u[i];
+           f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
+                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i], chi3[i]);*/
           }
-          else if (fc == 1) {                                               // Ey
-            Parameters p1 = {gs_3, us_3, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
-            Parameters p2 = {gs, us, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0};     // Y
-            Parameters p3 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
-            realnum seed1 = gs_3 * u[i];//  * u2[i];
-            realnum seed2 = f[i];
-            realnum seed3 = gs_2 * u[i];//   * u1[i];
-            runNR(seed1, seed2, seed3, &dummyF1, &f[i], &dummyF2, p1, p2, p3);
+          else {
+            // if chi2 == 0, all three eps rqd, else, ideally at least two eps rqd although
+            // sometimes 1 may be enough
+            if (fc == 0) { // Ex
+              // will be format Parameters p1 = {prevF D-P_X, eps, 0, 0, 0, chi2new, 0, 0 } etc;
+              Parameters p1 = {gs, us, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0};     // X
+              Parameters p2 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
+              Parameters p3 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
+              realnum seed1 = f[i];
+              realnum seed2 = gs_2 * u[i]; // * u1[i];
+              realnum seed3 = gs_3 * u[i]; //  * u2[i];
+              runNR(seed1, seed2, seed3, &f[i], &dummyF1, &dummyF2, p1, p2,
+                    p3); // TODO add explicit eqn soln check to nr
+            }
+            else if (fc == 1) {                                               // Ey
+              Parameters p1 = {gs_3, us_3, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
+              Parameters p2 = {gs, us, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0};     // Y
+              Parameters p3 = {gs_2, us_2, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new}; // Z.
+              realnum seed1 = gs_3 * u[i];                                    //  * u2[i];
+              realnum seed2 = f[i];
+              realnum seed3 = gs_2 * u[i]; //   * u1[i];
+              runNR(seed1, seed2, seed3, &dummyF1, &f[i], &dummyF2, p1, p2, p3);
+            }
+            else if (fc == 4) {                                               // Ez
+              Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
+              Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
+              Parameters p3 = {gs, us, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new};     // Z.
+              realnum seed1 = gs_2 * u[i];                                    // * u1[i];
+              realnum seed2 = gs_3 * u[i];                                    //  * u2[i];
+              realnum seed3 = f[i];
+              runNR(seed1, seed2, seed3, &dummyF1, &dummyF1, &f[i], p1, p2, p3);
+            }
+            else { cout << "hmm what?" << endl; }
+            // TODO REPLACE STuFF HERE ^^^^^^^^^^
           }
-          else if (fc == 4) {                                               // Ez
-            Parameters p1 = {gs_2, us_2, 0.0, 0.0, 0.0, chi2new, 0.0, 0.0}; // X
-            Parameters p2 = {gs_3, us_3, 0.0, 0.0, 0.0, 0.0, chi2new, 0.0}; // Y
-            Parameters p3 = {gs, us, 0.0, 0.0, 0.0, 0.0, 0.0, chi2new};     // Z.
-            realnum seed1 = gs_2  * u[i];// * u1[i];
-            realnum seed2 = gs_3 * u[i];//  * u2[i];
-            realnum seed3 = f[i];
-            runNR(seed1, seed2, seed3, &dummyF1, &dummyF1, &f[i], p1, p2, p3);
-          }
-          else { cout << "hmm what?" << endl; }
-          // TODO REPLACE STuFF HERE ^^^^^^^^^^
-
 
         }
       }

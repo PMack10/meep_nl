@@ -208,8 +208,8 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
         cout << " s1: " << seed1 << " s2: " << seed2 << " s3: " << seed3 << " f1: " << *fw << " fw2: "
              << *fw_2 << " fw3: " << *fw_3 << endl;
         cout << " p1A: " << p1.A << " p1B: " << p1.B << " p1F: " << p1.F << endl;
-        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2F: " << p2.G << endl;
-        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3F: " << p3.H << endl;
+        cout << " p2A: " << p2.A << " p2B: " << p2.B << " p2G: " << p2.G << endl;
+        cout << " p3A: " << p3.A << " p3B: " << p3.B << " p3H: " << p3.H << endl;
         sleep(4);
 
       return;
