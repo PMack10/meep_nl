@@ -839,9 +839,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       cout << "at chi3 diag " << endl;
 
       if (chi3) { /// TODO CHANGE from chi3 to chi2...
-
+        cout << "at chi3 diag 1 " << endl;
         if (g1 && g2) {
-          
+          cout << "at chi3 diag 2" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -852,7 +852,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-
+          cout << "at chi3 diag 3 " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
@@ -862,13 +862,13 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g2) {
-          ///cout << "ykdrs " << endl;
+          cout << "ykdrs " << endl;
 
           meep::abort("bug - didn't swap off-diagonal terms!?");
         }
 
         else {
-        ///cout << "lydtser " << endl;
+        cout << "lydtser " << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
