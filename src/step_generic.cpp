@@ -798,7 +798,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       
 
       else {
-        ///cout << "at chi3 else" << endl;
+        cout << "at chi3 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -807,7 +807,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      ///cout << "at chi3 u1" << endl;
+      cout << "at chi3 u1" << endl;
       cout << " shouldn't be in NONpml u1..." << endl;
 
       if (chi3) {
@@ -822,7 +822,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       
 
       else {
-        ///cout << "at chi3 u1 else" << endl;
+        cout << "at chi3 u1 else" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -831,12 +831,12 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u2) { // 2x2 off-diagonal u
-      ///cout << "abrte" << endl;
+      cout << "abrte" << endl;
 
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      ///cout << "at chi3 diag " << endl;
+      cout << "at chi3 diag " << endl;
 
       if (chi3) { /// TODO CHANGE from chi3 to chi2...
 
@@ -878,7 +878,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
 
       else if (u) {
-        ///cout << "most basic case  " << endl;
+        cout << "most basic case  " << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
        //   ///cout << u[i] << "  " << g[i] << endl;
 

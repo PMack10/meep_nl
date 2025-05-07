@@ -290,7 +290,7 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
       /// loop becasue we're doing all 3 field components at once in the NR solver!
       /// TODO this bit is only for the PML case [is it??], need another one where it's not pml
       /// case..? handle the NL chunks and pass in all xyz field components in at once.
-      if (s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes)
+      if (false && s->chi2[ez] && ft == E_stuff) { /// if chi2 is non-zero (only z direction checked, but assumes defined for ALL axes) TODO remove false to use this
        // cout << "Doing Nonlinear 1: " << ft << "  " << dc << "  " << dc_1 << "  "<<dc_2 << "  " << ecInLoop << endl; /// of chi3... TODO check s->chi3[ec] 
 
         if (f[ez][cmp]) { // added this as it's also wrapping the stuffin FOR_FT_COMPONENTS
