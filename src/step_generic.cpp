@@ -751,11 +751,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           if (u[i] == 0)  zeroEpsCounter += 1; //TODO once everything is working, need to change u1, u2 to u_1 u_2 (and add as new params to the fn) so can have anisotropic material...
           if (u1[i] == 0) zeroEpsCounter += 1;
           if (u2[i] == 0) zeroEpsCounter += 1;
-          if (chi2new == 0 || zeroEpsCounter < 2) {// Then do normal thing (without off diagonals or chi's) and not NR
+          if (chi2new == 0 || zeroEpsCounter > 1) {// Then do normal thing (without off diagonals or chi's) and not NR
             realnum gs = g[i];
             realnum us = u[i];
             f[i] = (gs * us);
-            cout << "in npml chi3 u1u2: NON NR" << endl;
+          //  cout << "in npml chi3 u1u2: NON NR" << endl;
     /*       realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
            realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
            realnum gs = g[i];
