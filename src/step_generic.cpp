@@ -888,9 +888,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
+        cout << " SHOULDN'T be here! "<< u[0] << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i)
         {
-        cout << " SHOULDN'T be here! "<< u[0] << endl;
         f[i] = g[i];
       }
     }
