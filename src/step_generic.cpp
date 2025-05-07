@@ -717,11 +717,11 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-    cout << "ahwhaw" << endl;
+  //  cout << "ahwhaw" << endl;
     if (u1 && u2) { // 3x3 off-diagonal u
-      cout << "u1u2 npml" << endl;
+   //   cout << "u1u2 npml" << endl;
      if (chi3) {
-        cout << "awfawe" << endl;
+        //cout << "in npml chi3 u1u2:" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
       
           // NEW STUFF Here \/ \/
@@ -755,6 +755,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
             realnum gs = g[i];
             realnum us = u[i];
             f[i] = (gs * us);
+            cout << "in npml chi3 u1u2: NON NR" << endl;
     /*       realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
            realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
            realnum gs = g[i];
@@ -763,6 +764,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i], chi3[i]);*/
           }
           else {
+            cout << "NR" << endl;
             // if chi2 == 0, all three eps rqd, else, ideally at least two eps rqd although
             // sometimes 1 may be enough
             if (fc == 0) { // Ex
@@ -794,14 +796,17 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
               realnum seed3 = f[i];
               runNR(seed1, seed2, seed3, &dummyF1, &dummyF1, &f[i], p1, p2, p3);
             }
-            else { cout << "hmm what?" << endl; }
+            else {
+              cout << "hmm what?!" << endl;
+              sleep(10);
+            }
             // TODO REPLACE STuFF HERE ^^^^^^^^^^
           }
 
         }
       }
       else {
-        cout << "jsrjst" << endl;
+      //  cout << "jsrjst" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -810,7 +815,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      cout << "jreaweqg" << endl;
+    //  cout << "jreaweqg" << endl;
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -832,10 +837,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      cout << "aulkyrjthewfawe" << endl;
+   //   cout << "aulkyrjthewfawe" << endl;
       if (chi3) {
         if (g1 && g2) {
-          cout << "rahw" << endl;
+       //   cout << "rahw" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -846,7 +851,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-          cout << "tajawe" << endl;
+    //      cout << "tajawe" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
@@ -857,7 +862,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
         else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
         else {
-          cout << "rwjmszvew" << endl;
+     //     cout << "rwjmszvew" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
@@ -866,7 +871,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
-        cout << "ukrjwwrww,m" << endl;
+    //    cout << "ukrjwwrww,m" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
