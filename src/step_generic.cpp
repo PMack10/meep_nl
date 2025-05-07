@@ -574,7 +574,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
                       const RPR g, const RPR g1, const RPR g2, const RPR u, const RPR u1,
                       const RPR u2, ptrdiff_t s, ptrdiff_t s1, ptrdiff_t s2, const RPR chi2,
                       const RPR chi3, RPR fw, direction dsigw, const RPR sigw, const RPR kapw) {
- /// (void)fc; // currently unused
+  (void)fc; // currently unused
   if (!f) return;
   // f= E field,  fc = field component (ec).
   // g, g1 g2 are the D components (Dx, Dy..) of the fminusp data
