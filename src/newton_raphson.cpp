@@ -243,7 +243,7 @@ void runNR(realnum seed1, realnum seed2, realnum seed3, realnum* fw, realnum* fw
       for (int i = 0, imax = 100; i < imax; ++i) {
         if (newtonRaphson(_seed1, _seed2, _seed3, p1, p2, p3, fw, fw_2, fw_3, tol1, tol2, tol3)) {
           //   if (newtonRaphson(seed1, seed2, seed3, p1, p2, p3, fw, fw_2, fw_3)) {
-       cout << "Converged " << i << endl;
+      // cout << "Converged " << i << endl;
         /*     cout << "tols: " << tol1 << "  " << tol2 << "  " << tol3 << endl;
           cout << " s1: " << _seed1 << " s2: " << _seed2 << " s3: " << _seed3 << " f1: " << *fw
                << " fw2: " << *fw_2 << "fw3: " << *fw_3 << endl;
