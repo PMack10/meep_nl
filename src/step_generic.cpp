@@ -603,7 +603,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
-      if (chi3) {
+      cout << "PML awfwefa" << endl;
+
+        if (false) { //if (chi3) { skip this as don't want NL stuff in PML anyway
         //////////////////// MOST GENERAL CASE //////////////////////
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -612,7 +614,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           realnum us = u[i];
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
-          fw[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
+         fw[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)) *
                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us, chi2[i],
                                    chi3[i]);
           f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
@@ -620,36 +622,41 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         /////////////////////////////////////////////////////////////
       }
       else {
+        cout << "PML jrjera" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
-          fw[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2));
+          fw[i] = (gs * us);
+        //  fw[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2));  TODO BLock this
           f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
         }
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      if (chi3) {
+      if (false) {//if (chi3) { skip this as don't want NL stuff in PML anyway
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum gs = g[i];
           realnum us = u[i];
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
-          fw[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
-                  calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+          fw[i] = (gs * us);
+          // fw[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
+         //         calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);  TODO BLock this
           f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
         }
       }
       else {
+        cout << "PML uuuuuuuuuuuu" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
-          fw[i] = (gs * us + OFFDIAG(u1, g1, s1));
+          fw[i] = (gs * us);
+          //   fw[i] = (gs * us + OFFDIAG(u1, g1, s1));  TODO BLock this
           f[i] += (kapwkw + sigwkw) * fw[i] - (kapwkw - sigwkw) * fwprev;
         }
       }
@@ -658,7 +665,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      if (chi3) {
+      if (false) { // if (chi3) { skip this as don't want NL stuff in PML anyway
         if (g1 && g2) {
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -697,6 +704,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
+        cout << "PML agaerserjsretj" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -707,6 +715,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
+        cout << "PML oooooooooooooooo" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
@@ -717,9 +726,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-  //  cout << "ahwhaw" << endl;
+    cout << "ahwhaw" << endl;
     if (u1 && u2) { // 3x3 off-diagonal u
-   //   cout << "u1u2 npml" << endl;
+      cout << "u1u2 npml" << endl;
      if (chi3) {
         //cout << "in npml chi3 u1u2:" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -806,30 +815,33 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-      //  cout << "jsrjst" << endl;
+        cout << "jsrjst" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
-          f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2));
+          f[i] = (gs * us);
+     //     f[i] = (gs * us + OFFDIAG(u1, g1, s1) + OFFDIAG(u2, g2, s2)); //TODO block this 
         }
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-    //  cout << "jreaweqg" << endl;
+      cout << "jreaweqg" << endl;
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
           realnum gs = g[i];
           realnum us = u[i];
-          f[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
-                 calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+          f[i] = (gs * us);
+       //   f[i] = (gs * us + OFFDIAG(u1, g1, s1)) *
+         //        calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);//TODO block this 
         }
       }
       else {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
-          f[i] = (gs * us + OFFDIAG(u1, g1, s1));
+          f[i] = (gs * us);
+          //f[i] = (gs * us + OFFDIAG(u1, g1, s1));//TODO block this 
         }
       }
     }
@@ -837,41 +849,44 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-   //   cout << "aulkyrjthewfawe" << endl;
+      cout << "aulkyrjthewfawe" << endl;
       if (chi3) {
         if (g1 && g2) {
-       //   cout << "rahw" << endl;
+          cout << "rahw" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
             realnum gs = g[i];
             realnum us = u[i];
-            f[i] = (gs * us) * calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us,
-                                                chi2[i], chi3[i]);
+            f[i] = (gs * us);
+            //  f[i] = (gs * us) * calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s + g2s * g2s), gs, us,
+           //                                     chi2[i], chi3[i]); //TODO block this 
           }
         }
         else if (g1) {
-    //      cout << "tajawe" << endl;
+          cout << "tajawe" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
             realnum us = u[i];
-            f[i] = (gs * us) *
-                   calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]);
+            f[i] = (gs * us);
+          //  f[i] = (gs * us) *
+           //        calc_nonlinear_u(gs * gs + 0.0625 * (g1s * g1s), gs, us, chi2[i], chi3[i]); //TODO block this 
           }
         }
         else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
         else {
-     //     cout << "rwjmszvew" << endl;
+          cout << "rwjmszvew" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
-            f[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2[i], chi3[i]);
+            f[i] = (gs * us);
+       //     f[i] = (gs * us) * calc_nonlinear_u(gs * gs, gs, us, chi2[i], chi3[i]); //TODO block this 
           }
         }
       }
       else if (u) {
-    //    cout << "ukrjwwrww,m" << endl;
+        cout << "ukrjwwrww,m" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
