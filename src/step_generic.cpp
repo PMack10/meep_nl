@@ -603,7 +603,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
   if (dsigw != NO_DIRECTION) { //////// PML case (with fw) /////////////
     KSTRIDE_DEF(dsigw, kw, is, gv);
     if (u1 && u2) { // 3x3 off-diagonal u
-      cout << "PML awfwefa" << endl;
+    //  cout << "PML awfwefa" << endl;
 
         if (false) { //if (chi3) { skip this as don't want NL stuff in PML anyway
         //////////////////// MOST GENERAL CASE //////////////////////
@@ -622,7 +622,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         /////////////////////////////////////////////////////////////
       }
       else {
-        cout << "PML jrjera" << endl;
+   //     cout << "PML jrjera" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -649,7 +649,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-        cout << "PML uuuuuuuuuuuu" << endl;
+    //    cout << "PML uuuuuuuuuuuu" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -704,7 +704,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
-        cout << "PML agaerserjsretj" << endl;
+    //    cout << "PML agaerserjsretj" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -715,7 +715,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-        cout << "PML oooooooooooooooo" << endl;
+     //   cout << "PML oooooooooooooooo" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           DEF_kw;
           realnum fwprev = fw[i], kapwkw = kapw[kw], sigwkw = sigw[kw];
@@ -726,9 +726,9 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
     }
   }
   else {            /////////////// no PML (no fw) ///////////////////
-    cout << "ahwhaw" << endl;
+ //   cout << "ahwhaw" << endl;
     if (u1 && u2) { // 3x3 off-diagonal u
-      cout << "u1u2 npml" << endl;
+//cout << "u1u2 npml" << endl;
      if (chi3) {
         //cout << "in npml chi3 u1u2:" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
@@ -815,7 +815,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else {
-        cout << "jsrjst" << endl;
+   //     cout << "jsrjst" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
@@ -825,7 +825,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
     }
     else if (u1) { // 2x2 off-diagonal u
-      cout << "jreaweqg" << endl;
+     // cout << "jreaweqg" << endl;
       if (chi3) {
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
@@ -849,10 +849,10 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       meep::abort("bug - didn't swap off-diagonal terms!?");
     }
     else { // diagonal u
-      cout << "aulkyrjthewfawe" << endl;
+    //  cout << "aulkyrjthewfawe" << endl;
       if (chi3) {
         if (g1 && g2) {
-          cout << "rahw" << endl;
+      //    cout << "rahw" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum g2s = g2[i] + g2[i + s] + g2[i - s2] + g2[i + (s - s2)];
@@ -864,7 +864,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           }
         }
         else if (g1) {
-          cout << "tajawe" << endl;
+     //     cout << "tajawe" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum g1s = g1[i] + g1[i + s] + g1[i - s1] + g1[i + (s - s1)];
             realnum gs = g[i];
@@ -876,7 +876,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
         else if (g2) { meep::abort("bug - didn't swap off-diagonal terms!?"); }
         else {
-          cout << "rwjmszvew" << endl;
+      //    cout << "rwjmszvew" << endl;
           PLOOP_OVER_IVECS(gv, is, ie, i) {
             realnum gs = g[i];
             realnum us = u[i];
@@ -886,7 +886,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
         }
       }
       else if (u) {
-        cout << "ukrjwwrww,m" << endl;
+     //   cout << "ukrjwwrww,m" << endl;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
