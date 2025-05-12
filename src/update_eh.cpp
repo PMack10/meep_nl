@@ -237,19 +237,19 @@ FOR_FT_COMPONENTS(ft,ec) { // Iter thro field type components, i.e., for Estuff;
           if (f[ec][cmp] != f[dc][cmp]) {
 
          ///   cout << "Doing linear pre step call 2"  << endl;
-            if (ft == E_stuff ) {
-           cout << "strides ec: " << ec << " i: " << int(i) << " s " << (int)s_ec
-                << " s1 " << (int)s_1 << "  s2 " << s_2 << "  little corner: ["
-                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(0) << ", "
-                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(1) << ", "
-                   << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(2) << "]"
-                   << "  big c: [" << (gvs_eh[ft][i].big_corner()).yucky_val(0)
-                   << ", " << (gvs_eh[ft][i].big_corner()).yucky_val(1) << ", "
-                   << (gvs_eh[ft][i].big_corner()).yucky_val(2) << "]" 
-                   << "  big owned c: [" << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(0) << ", "
-                   << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(1) << ", "
-                   << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(2) << "]" << endl;
-            }//1.68966 x 1.68966 x 5.44828 with resolution 58
+           // if (ft == E_stuff ) {
+           //cout << "strides ec: " << ec << " i: " << int(i) << " s " << (int)s_ec
+           //     << " s1 " << (int)s_1 << "  s2 " << s_2 << "  little corner: ["
+           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(0) << ", "
+           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(1) << ", "
+           //        << (gvs_eh[ft][i].little_owned_corner0(ec)).yucky_val(2) << "]"
+           //        << "  big c: [" << (gvs_eh[ft][i].big_corner()).yucky_val(0)
+           //        << ", " << (gvs_eh[ft][i].big_corner()).yucky_val(1) << ", "
+           //        << (gvs_eh[ft][i].big_corner()).yucky_val(2) << "]" 
+           //        << "  big owned c: [" << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(0) << ", "
+           //        << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(1) << ", "
+           //        << (gvs_eh[ft][i].big_owned_corner(ec)).yucky_val(2) << "]" << endl;
+           // }//1.68966 x 1.68966 x 5.44828 with resolution 58
 
             STEP_UPDATE_EDHB(
                 f[ec][cmp], ec, gv, gvs_eh[ft][i].little_owned_corner0(ec),
