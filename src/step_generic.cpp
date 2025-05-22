@@ -887,12 +887,13 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
       }
       else if (u) {
         cout << "ukrjwwrww,m" << endl;
+        bool trig = false;
         PLOOP_OVER_IVECS(gv, is, ie, i) {
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us);
           if (fc == 0) {
-            cout << "here" endl;
+            cout << "here  "<< i << endl;
             if (i == 40) { cout << f[i] << endl; }
           }
            
