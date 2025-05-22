@@ -891,6 +891,7 @@ void step_update_EDHB(RPR f, component fc, const grid_volume &gv, const ivec is,
           realnum gs = g[i];
           realnum us = u[i];
           f[i] = (gs * us);
+          if (fc == 0 && i == 40) { cout << f[i] << endl; }
         }
       }
       else
